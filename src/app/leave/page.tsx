@@ -54,29 +54,37 @@ export default function LeavePage({ userId }: LeavePageProps) {
         })
             .then((res) => res.json())
             .then((data) => {
-                setUserRole(data.role);
-                setEmployeeId(data.employee_id);
+                    setUserRole(data.role);
+                    const empId = userId || data.employee_id;
+                    setEmployeeId(empId);
 
-                // Fetch leave balance using employee ID from props or profile
-                if (data.employee_id) {
-                    fetch(`http://localhost:3001/leave/balance/${data.employee_id}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    })
+                    // Fetch leave balance using employee ID from props or profile
+                    if (empId) {
+                        fetch(`http://localhost:3001/leave/balance/${empId}`, {
+                            headers: { Authorization: `Bearer ${token}` },
+                        })
+                            .then((res) => res.json())
+                            .then((data) => setBalances(Array.isArray(data) ? data : []))
+                            .catch(console.error);
+                    }
+
+                    // Fetch leave applications. Admin/HR see all, others see only their own
+                    const appsUrl = (data.role === 'Admin' || data.role === 'HR')
+                        ? 'http://localhost:3001/leave/applications'
+                        : `http://localhost:3001/leave/applications?employeeId=${empId}`;
+
+                    fetch(appsUrl, { headers: { Authorization: `Bearer ${token}` } })
                         .then((res) => res.json())
-                        .then((data) => setBalances(Array.isArray(data) ? data : []))
-                        .catch(console.error);
-                }
-            })
-            .catch(console.error);
+                        .then((apps) => setApplications(Array.isArray(apps) ? apps : []))
+                        .catch(console.error)
+                        .finally(() => setLoading(false));
+                })
+                .catch((err) => {
+                    console.error(err);
+                    setLoading(false);
+                });
 
-        // Fetch leave applications
-        fetch('http://localhost:3001/leave/applications', {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.json())
-            .then((data) => setApplications(data))
-            .catch(console.error)
-            .finally(() => setLoading(false));
+        // Applications will be fetched after we get the profile (so we know employeeId)
     }, [router]);
 
     const handleSubmit = async (e: React.FormEvent) => {

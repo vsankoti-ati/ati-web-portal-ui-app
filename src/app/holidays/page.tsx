@@ -18,7 +18,7 @@ export default function HolidaysPage() {
     const [holidays, setHolidays] = useState<Holiday[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedYear, setSelectedYear] = useState(2025);
-    const [selectedClient, setSelectedClient] = useState<string>('all');
+    const [selectedClient, setSelectedClient] = useState<string>('');
     const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
@@ -48,10 +48,10 @@ export default function HolidaysPage() {
     // Get unique clients from holidays
     const clients = Array.from(new Set(holidays.map((h) => h.client))).sort();
 
-    // Filter holidays by selected client
-    const filteredHolidays = selectedClient === 'all' 
-        ? holidays 
-        : holidays.filter((h) => h.client === selectedClient);
+    // Filter holidays by selected client — only populate when a client is chosen
+    const filteredHolidays = selectedClient
+        ? holidays.filter((h) => h.client === selectedClient)
+        : [];
 
     const groupedHolidays = filteredHolidays.reduce((acc, holiday) => {
         const month = new Date(holiday.date).toLocaleString('default', { month: 'long' });
@@ -84,7 +84,7 @@ export default function HolidaysPage() {
                             className={styles.clientSelect}
                             aria-label="Select Client"
                         >
-                            <option value="all">All Clients</option>
+                            <option value="">Select Client</option>
                             {clients.map((client) => (
                                 <option key={client} value={client}>
                                     {client}
@@ -130,11 +130,11 @@ export default function HolidaysPage() {
                     ))}
                 </div>
 
-                {filteredHolidays.length === 0 && (
-                    <div className={styles.empty}>
-                        No holidays found for {selectedClient === 'all' ? selectedYear : `${selectedClient} in ${selectedYear}`}
-                    </div>
-                )}
+                {selectedClient === '' ? (
+                    <div className={styles.empty}>Please select a client to view holidays for {selectedYear}</div>
+                ) : filteredHolidays.length === 0 ? (
+                    <div className={styles.empty}>No holidays found for {selectedClient} in {selectedYear}</div>
+                ) : null}
             </div>
         </DashboardLayout>
     );

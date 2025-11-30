@@ -121,14 +121,20 @@ export default function NewTimesheetPage() {
                 // Add time entries
                 for (const entry of entries) {
                     if (entry.project_id) {
-                        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                        for (let i = 0; i < days.length; i++) {
-                            const day = days[i] as keyof Omit<TimeEntry, 'project_id'>;
-                            const hours = entry[day];
+                        // Map UI columns to correct weekday offsets (Mon=0, ..., Fri=4)
+                        const days = [
+                            { key: 'monday', offset: 1 },
+                            { key: 'tuesday', offset: 2 },
+                            { key: 'wednesday', offset: 3 },
+                            { key: 'thursday', offset: 4 },
+                            { key: 'friday', offset: 5 }
+                        ];
+                        for (const { key, offset } of days) {
+                            const hours = entry[key as keyof Omit<TimeEntry, 'project_id'>];
                             if (hours > 0) {
-                                const entryDate = new Date(weekStart);
-                                entryDate.setDate(entryDate.getDate() + i);
-
+                                const base = new Date(weekStart + 'T00:00:00');
+                                base.setDate(base.getDate() + offset);
+                                const localDateStr = base.getFullYear() + '-' + String(base.getMonth() + 1).padStart(2, '0') + '-' + String(base.getDate()).padStart(2, '0');
                                 await fetch('http://localhost:3001/timesheets/entries', {
                                     method: 'POST',
                                     headers: {
@@ -138,7 +144,7 @@ export default function NewTimesheetPage() {
                                     body: JSON.stringify({
                                         timesheet_id: timesheet.id,
                                         project_id: entry.project_id,
-                                        entry_date: entryDate.toISOString().split('T')[0],
+                                        entry_date: localDateStr,
                                         start_time: '09:00:00',
                                         end_time: `${9 + hours}:00:00`,
                                         hours_worked: hours,
