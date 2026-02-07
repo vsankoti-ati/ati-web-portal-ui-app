@@ -7,8 +7,8 @@ import styles from './timesheets.module.css';
 
 interface Timesheet {
     id: string;
-    start_date: string;
-    end_date: string;
+    week_start_date: string;
+    week_end_date: string;
     status: string;
     submission_date: string | null;
 }
@@ -66,13 +66,13 @@ export default function TimesheetsPage() {
                             onClick={() => router.push(`/timesheets/${ts.id}`)}
                         >
                             <div className={styles.cardHeader}>
-                                <h3>Week of {new Date(ts.start_date).toLocaleDateString()}</h3>
+                                <h3>Week of {new Date(ts.week_start_date).toLocaleDateString()}</h3>
                                 <span className={`${styles.status} ${styles[ts.status]}`}>
                                     {ts.status}
                                 </span>
                             </div>
                             <div className={styles.cardBody}>
-                                <p><strong>Period:</strong> {new Date(ts.start_date).toLocaleDateString()} - {new Date(ts.end_date).toLocaleDateString()}</p>
+                                <p><strong>Period:</strong> {new Date(ts.week_start_date).toLocaleDateString()} - {new Date(ts.week_end_date).toLocaleDateString()}</p>
                                 {ts.submission_date && (
                                     <p><strong>Submitted:</strong> {new Date(ts.submission_date).toLocaleDateString()}</p>
                                 )}

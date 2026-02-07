@@ -110,8 +110,8 @@ export default function NewTimesheetPage() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    start_date: weekStart,
-                    end_date: endDate.toISOString().split('T')[0],
+                    week_start_date: weekStart,
+                    week_end_date: endDate.toISOString().split('T')[0],
                 }),
             });
 
@@ -147,8 +147,8 @@ export default function NewTimesheetPage() {
                                         entry_date: localDateStr,
                                         start_time: '09:00:00',
                                         end_time: `${9 + hours}:00:00`,
-                                        hours_worked: hours,
-                                        notes: '',
+                                        hours: hours,
+                                        description: '',
                                     }),
                                 });
                             }

@@ -9,10 +9,10 @@ interface LeaveApplication {
     id: string;
     employee_id: string;
     leave_type: string;
-    from_date: string;
-    to_date: string;
+    start_date: string;
+    end_date: string;
     status: string;
-    comment: string;
+    reason: string;
     applied_date: string;
 }
 
@@ -151,18 +151,18 @@ export default function LeaveApprovalsPage() {
                                 <div className={styles.dateRange}>
                                     <div>
                                         <label>From</label>
-                                        <p>{new Date(app.from_date).toLocaleDateString()}</p>
+                                        <p>{new Date(app.start_date).toLocaleDateString()}</p>
                                     </div>
                                     <div>
                                         <label>To</label>
-                                        <p>{new Date(app.to_date).toLocaleDateString()}</p>
+                                        <p>{new Date(app.end_date).toLocaleDateString()}</p>
                                     </div>
                                 </div>
 
-                                {app.comment && (
-                                    <div className={styles.comment}>
-                                        <label>Comment</label>
-                                        <p>{app.comment}</p>
+                                {app.reason && (
+                                    <div className={styles.reason}>
+                                        <label>reason</label>
+                                        <p>{app.reason}</p>
                                     </div>
                                 )}
 

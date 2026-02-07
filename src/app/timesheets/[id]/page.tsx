@@ -18,8 +18,8 @@ interface TimeEntry {
     id: string;
     project_id: string;
     entry_date: string;
-    hours_worked: number;
-    notes: string;
+    hours: number;
+    description: string;
 }
 
 export default function TimesheetDetailPage() {
@@ -103,7 +103,7 @@ export default function TimesheetDetailPage() {
 
     const calculateTotalHours = () => {
         if (!timesheet || !timesheet.entries) return 0;
-        return timesheet.entries.reduce((sum, entry) => sum + entry.hours_worked, 0);
+        return timesheet.entries.reduce((sum, entry) => sum + entry.hours, 0);
     };
 
     if (loading) {

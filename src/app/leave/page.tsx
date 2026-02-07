@@ -13,10 +13,10 @@ interface LeaveBalance {
 interface LeaveApplication {
     id: string;
     leave_type: string;
-    from_date: string;
-    to_date: string;
+    start_date: string;
+    end_date: string;
     status: string;
-    comment: string;
+    reason: string;
     applied_date: string;
 }
 
@@ -34,9 +34,9 @@ export default function LeavePage({ userId }: LeavePageProps) {
     const [employeeId, setEmployeeId] = useState(userId || '');
     const [formData, setFormData] = useState({
         leave_type: 'Earned',
-        from_date: '',
-        to_date: '',
-        comment: '',
+        start_date: '',
+        end_date: '',
+        reason: '',
     });
 
     useEffect(() => {
@@ -106,7 +106,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                 const newApp = await res.json();
                 setApplications([...applications, newApp]);
                 setShowApplyForm(false);
-                setFormData({ leave_type: 'Earned', from_date: '', to_date: '', comment: '' });
+                setFormData({ leave_type: 'Earned', start_date: '', end_date: '', reason: '' });
             }
         } catch (error) {
             console.error('Error applying for leave:', error);
@@ -158,8 +158,8 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                     <label>From Date</label>
                                     <input
                                         type="date"
-                                        value={formData.from_date}
-                                        onChange={(e) => setFormData({ ...formData, from_date: e.target.value })}
+                                        value={formData.start_date}
+                                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                                         required
                                         aria-label="From Date"
                                     />
@@ -168,20 +168,20 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                     <label>To Date</label>
                                     <input
                                         type="date"
-                                        value={formData.to_date}
-                                        onChange={(e) => setFormData({ ...formData, to_date: e.target.value })}
+                                        value={formData.end_date}
+                                        onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                                         required
                                         aria-label="To Date"
                                     />
                                 </div>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Comment</label>
+                                <label>reason</label>
                                 <textarea
-                                    value={formData.comment}
-                                    onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+                                    value={formData.reason}
+                                    onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                                     rows={3}
-                                    aria-label="Comment"
+                                    aria-label="reason"
                                 />
                             </div>
                             <button type="submit" className={styles.submitBtn}>Submit Application</button>
@@ -215,8 +215,8 @@ export default function LeavePage({ userId }: LeavePageProps) {
                         {applications.map((app) => (
                             <div key={app.id} className={styles.tableRow}>
                                 <div>{app.leave_type}</div>
-                                <div>{new Date(app.from_date).toLocaleDateString()}</div>
-                                <div>{new Date(app.to_date).toLocaleDateString()}</div>
+                                <div>{new Date(app.start_date).toLocaleDateString()}</div>
+                                <div>{new Date(app.end_date).toLocaleDateString()}</div>
                                 <div>
                                     <span className={`${styles.status} ${styles[app.status]}`}>
                                         {app.status}
