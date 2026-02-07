@@ -31,7 +31,7 @@ export default function LeaveApprovalsPage() {
         }
 
         // Get user profile to check role
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -45,7 +45,7 @@ export default function LeaveApprovalsPage() {
             .catch(console.error);
 
         // Fetch all leave applications
-        fetch('http://localhost:3001/leave/applications', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/applications`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -57,7 +57,7 @@ export default function LeaveApprovalsPage() {
     const handleApprove = async (id: string) => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:3001/leave/${id}/approve`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/${id}/approve`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -74,7 +74,7 @@ export default function LeaveApprovalsPage() {
     const handleReject = async (id: string) => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:3001/leave/${id}/reject`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/${id}/reject`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` },
             });

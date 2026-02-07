@@ -40,7 +40,7 @@ export default function JobDetailPage() {
         }
 
         // Fetch job details
-        fetch(`http://localhost:3001/jobs/${params.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/${params.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -54,7 +54,7 @@ export default function JobDetailPage() {
         const token = localStorage.getItem('token');
 
         try {
-            const res = await fetch('http://localhost:3001/jobs/refer', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/refer`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ export default function JobDetailPage() {
                                 <span className={styles.metaItem}>⏱️ {job.experience_required}</span>
                             </div>
                         </div>
-                        <span className={`${styles.status} ${styles[job.status.toLowerCase()]}`}>
+                        <span className={`${styles.status} ${job.status ? styles[job.status.toLowerCase()] : ''}`}>
                             {job.status}
                         </span>
                     </div>

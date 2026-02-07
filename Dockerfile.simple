@@ -1,0 +1,39 @@
+# Alternative Dockerfile without standalone mode
+# Use this if the main Dockerfile fails
+
+FROM node:18-alpine
+
+# Install libc6-compat for compatibility
+RUN apk add --no-cache libc6-compat
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+
+# Copy all source files
+COPY . .
+
+# Build arguments for environment variables
+ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+# Disable telemetry
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build the application
+RUN npm run build
+
+# Expose port
+EXPOSE 3000
+
+# Set environment variables
+ENV PORT=3000
+ENV NODE_ENV=production
+
+# Start the application
+CMD ["npm", "start"]

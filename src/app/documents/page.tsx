@@ -29,15 +29,25 @@ export default function DocumentsPage() {
         }
 
         const url = filterType === 'all'
-            ? 'http://localhost:3001/documents'
-            : `http://localhost:3001/documents?type=${filterType}`;
+            ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/documents`
+            : `${process.env.NEXT_PUBLIC_API_BASE_URL}/documents?type=${filterType}`;
 
         fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
-            .then((data) => setDocuments(data))
-            .catch(console.error)
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setDocuments(data);
+                } else {
+                    console.error('Documents response is not an array:', data);
+                    setDocuments([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching documents:', error);
+                setDocuments([]);
+            })
             .finally(() => setLoading(false));
     }, [router, filterType]);
 

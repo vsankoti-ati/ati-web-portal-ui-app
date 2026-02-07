@@ -8,8 +8,8 @@ import styles from './timesheet-detail.module.css';
 interface Timesheet {
     id: string;
     employee_id: string;
-    start_date: string;
-    end_date: string;
+    week_start_date: string;
+    week_end_date: string;
     status: string;
     entries: TimeEntry[];
 }
@@ -37,7 +37,7 @@ export default function TimesheetDetailPage() {
         }
 
         // Get user profile to check role
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -45,7 +45,7 @@ export default function TimesheetDetailPage() {
             .catch(console.error);
 
         // Fetch timesheet details
-        fetch(`http://localhost:3001/timesheets/${params.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${params.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -57,7 +57,7 @@ export default function TimesheetDetailPage() {
     const handleSubmit = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:3001/timesheets/${params.id}/submit`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${params.id}/submit`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -74,7 +74,7 @@ export default function TimesheetDetailPage() {
     const handleApprove = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:3001/timesheets/${params.id}/approve`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${params.id}/approve`, {
                 method: 'PATCH',
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -142,7 +142,7 @@ export default function TimesheetDetailPage() {
                         <div>
                             <h1>Timesheet Details</h1>
                             <p className={styles.period}>
-                                {new Date(timesheet.start_date).toLocaleDateString()} - {new Date(timesheet.end_date).toLocaleDateString()}
+                                {new Date(timesheet.week_start_date).toLocaleDateString()} - {new Date(timesheet.week_end_date).toLocaleDateString()}
                             </p>
                         </div>
                         <span className={`${styles.status} ${styles[timesheet.status]}`}>

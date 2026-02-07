@@ -23,7 +23,7 @@ export default function NewEmployeePage() {
         const token = localStorage.getItem('token');
 
         try {
-            const res = await fetch('http://localhost:3001/employees', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employees`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

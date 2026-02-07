@@ -51,7 +51,7 @@ export default function NewTimesheetPage() {
         setWeekStart(sunday.toISOString().split('T')[0]);
 
         // Fetch projects
-        fetch('http://localhost:3001/timesheets/projects/all', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/projects/all`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -103,7 +103,7 @@ export default function NewTimesheetPage() {
             endDate.setDate(startDate.getDate() + 6);
 
             // Create timesheet
-            const timesheetRes = await fetch('http://localhost:3001/timesheets', {
+            const timesheetRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default function NewTimesheetPage() {
                                 const base = new Date(weekStart + 'T00:00:00');
                                 base.setDate(base.getDate() + offset);
                                 const localDateStr = base.getFullYear() + '-' + String(base.getMonth() + 1).padStart(2, '0') + '-' + String(base.getDate()).padStart(2, '0');
-                                await fetch('http://localhost:3001/timesheets/entries', {
+                                await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/entries`, {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ export default function NewTimesheetPage() {
                                                 required
                                             >
                                                 <option value="">Select Project</option>
-                                                {projects.map((project) => (
+                                                {projects?.map((project) => (
                                                     <option key={project.id} value={project.id}>
                                                         {project.name}
                                                     </option>

@@ -49,7 +49,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
         
 
         // Get user profile to check role and employee ID
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -60,7 +60,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
 
                     // Fetch leave balance using employee ID from props or profile
                     if (empId) {
-                        fetch(`http://localhost:3001/leave/balance/${empId}`, {
+                        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/balance/${empId}`, {
                             headers: { Authorization: `Bearer ${token}` },
                         })
                             .then((res) => res.json())
@@ -70,8 +70,8 @@ export default function LeavePage({ userId }: LeavePageProps) {
 
                     // Fetch leave applications. Admin/HR see all, others see only their own
                     const appsUrl = (data.role === 'Admin' || data.role === 'HR')
-                        ? 'http://localhost:3001/leave/applications'
-                        : `http://localhost:3001/leave/applications?employeeId=${empId}`;
+                        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/applications`
+                        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/applications?employeeId=${empId}`;
 
                     fetch(appsUrl, { headers: { Authorization: `Bearer ${token}` } })
                         .then((res) => res.json())
@@ -93,7 +93,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
         const request = { ...formData, employee_id: employeeId };
 
         try {
-            const res = await fetch('http://localhost:3001/leave/apply', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/apply`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

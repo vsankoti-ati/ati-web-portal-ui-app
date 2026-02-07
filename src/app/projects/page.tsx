@@ -28,7 +28,7 @@ export default function ProjectsPage() {
         }
 
         // Get user profile to check role
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -36,12 +36,22 @@ export default function ProjectsPage() {
             .catch(console.error);
 
         // Fetch projects
-        fetch('http://localhost:3001/projects', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
-            .then((data) => setProjects(data))
-            .catch(console.error)
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setProjects(data);
+                } else {
+                    console.error('Projects response is not an array:', data);
+                    setProjects([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching projects:', error);
+                setProjects([]);
+            })
             .finally(() => setLoading(false));
     }, [router]);
 
@@ -64,7 +74,7 @@ export default function ProjectsPage() {
                 </div>
 
                 <div className={styles.projectGrid}>
-                    {projects.map((project) => (
+                    {projects?.map((project) => (
                         <div key={project.id} className={styles.projectCard}>
                             <div className={styles.cardHeader}>
                                 <h2>{project.name}</h2>

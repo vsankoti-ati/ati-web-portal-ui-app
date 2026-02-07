@@ -28,7 +28,7 @@ export default function Home() {
         }
 
         // Fetch user profile
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -39,7 +39,7 @@ export default function Home() {
             .catch(console.error);
 
         // Fetch announcements
-        fetch('http://localhost:3001/announcements', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/announcements`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())

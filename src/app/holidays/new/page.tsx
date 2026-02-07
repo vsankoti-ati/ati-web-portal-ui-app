@@ -30,7 +30,7 @@ export default function NewHolidaysPage() {
         }
 
         // Get user profile to check role
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -57,7 +57,7 @@ export default function NewHolidaysPage() {
 
     const updateRow = (id: string, field: keyof HolidayRow, value: string) => {
         setHolidays(
-            holidays.map((h) => (h.id === id ? { ...h, [field]: value } : h))
+            holidays?.map((h) => (h.id === id ? { ...h, [field]: value } : h))
         );
     };
 
@@ -87,7 +87,7 @@ export default function NewHolidaysPage() {
                 occasion: h.occasion,
             }));
 
-            const res = await fetch('http://localhost:3001/holidays', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/holidays`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ export default function NewHolidaysPage() {
                             <div className={styles.colActions}>Actions</div>
                         </div>
 
-                        {holidays.map((holiday, index) => (
+                        {holidays?.map((holiday, index) => (
                             <div key={holiday.id} className={styles.tableRow}>
                                 <div className={styles.colIndex}>{index + 1}</div>
                                 <div className={styles.colDate}>

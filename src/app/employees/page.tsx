@@ -31,7 +31,7 @@ export default function EmployeesPage() {
         }
 
         // Check user role first
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -45,7 +45,7 @@ export default function EmployeesPage() {
                 }
 
                 // Fetch employees only if authorized
-                fetch('http://localhost:3001/employees', {
+                fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employees`, {
                     headers: { Authorization: `Bearer ${token}` },
                 })
                     .then((res) => res.json())

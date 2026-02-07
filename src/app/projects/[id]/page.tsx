@@ -32,7 +32,7 @@ export default function ProjectDetailPage() {
         }
 
         // Get user role
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -40,7 +40,7 @@ export default function ProjectDetailPage() {
             .catch(console.error);
 
         // Fetch project details
-        fetch(`http://localhost:3001/projects/${params.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${params.id}`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
@@ -55,7 +55,7 @@ export default function ProjectDetailPage() {
     const handleSave = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:3001/projects/${params.id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${params.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

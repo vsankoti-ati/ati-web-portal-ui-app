@@ -33,7 +33,7 @@ export default function EmployeeDetailPage() {
         }
 
         console.log(`Fetching employee ${params.id} with token`);
-        fetch(`http://localhost:3001/employees/${params.id}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employees/${params.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ export default function EmployeeDetailPage() {
     const handleSave = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://localhost:3001/employees/${params.id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employees/${params.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

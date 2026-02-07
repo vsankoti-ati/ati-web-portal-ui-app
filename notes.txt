@@ -1,0 +1,5 @@
+docker build -t ati-web-portal-ui-v1.0 --build-arg NEXT_PUBLIC_API_BASE_URL=https://ati-webportal-api--0000014.kindfield-c58c025e.eastus.azurecontainerapps.io .
+
+docker build -t ati-web-portal-ui-v3 --build-arg NEXT_PUBLIC_API_BASE_URL=https://ati-webportal-api--0000015.kindfield-c58c025e.eastus.azurecontainerapps.io .
+docker tag ati-web-portal-ui-v3 atiwebportalregistry.azurecr.io/ati-web-portal-ui:v3
+docker push atiwebportalregistry.azurecr.io/ati-web-portal-ui:v3

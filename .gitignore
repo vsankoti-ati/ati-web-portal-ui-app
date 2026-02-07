@@ -8,7 +8,9 @@ node_modules
 out/ # If using static export
 
 # Environment variables
-
+.env
+.env.local
+.env*.local
 
 # Local development and editor files
 .DS_Store

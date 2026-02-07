@@ -29,19 +29,29 @@ export default function HolidaysPage() {
         }
 
         // Get user profile to check role
-        fetch('http://localhost:3001/auth/profile', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
             .then((data) => setUserRole(data.role))
             .catch(console.error);
 
-        fetch(`http://localhost:3001/holidays?year=${selectedYear}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/holidays?year=${selectedYear}`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
-            .then((data) => setHolidays(data))
-            .catch(console.error)
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setHolidays(data);
+                } else {
+                    console.error('Holidays response is not an array:', data);
+                    setHolidays([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching holidays:', error);
+                setHolidays([]);
+            })
             .finally(() => setLoading(false));
     }, [router, selectedYear]);
 

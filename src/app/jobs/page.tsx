@@ -27,7 +27,7 @@ export default function JobsPage() {
             return;
         }
 
-        fetch('http://localhost:3001/jobs/openings', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/jobs/openings`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())

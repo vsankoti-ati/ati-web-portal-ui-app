@@ -25,12 +25,22 @@ export default function TimesheetsPage() {
             return;
         }
 
-        fetch('http://localhost:3001/timesheets', {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
-            .then((data) => setTimesheets(data))
-            .catch(console.error)
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setTimesheets(data);
+                } else {
+                    console.error('Timesheets response is not an array:', data);
+                    setTimesheets([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching timesheets:', error);
+                setTimesheets([]);
+            })
             .finally(() => setLoading(false));
     }, [router]);
 
@@ -49,7 +59,7 @@ export default function TimesheetsPage() {
                 </div>
 
                 <div className={styles.grid}>
-                    {timesheets.map((ts) => (
+                    {timesheets?.map((ts) => (
                         <div
                             key={ts.id}
                             className={styles.card}

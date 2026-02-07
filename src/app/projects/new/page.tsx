@@ -20,7 +20,7 @@ export default function NewProjectPage() {
         const token = localStorage.getItem('token');
 
         try {
-            const res = await fetch('http://localhost:3001/projects', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
