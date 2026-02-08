@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function LoginPage() {
 
@@ -34,6 +35,15 @@ export default function LoginPage() {
     return (
         <div className="main">
             <div style={{ padding: '2rem', border: '1px solid #ccc', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <Image 
+                        src="/thumb-ati.png" 
+                        alt="ATI Company Logo" 
+                        width={150} 
+                        height={60}
+                        style={{ objectFit: 'contain' }}
+                    />
+                </div>
                 <h1>Login</h1>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

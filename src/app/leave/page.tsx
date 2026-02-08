@@ -62,7 +62,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
 
                     // Fetch leave balance using employee ID from props or profile
                     if (empId) {
-                        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/balance/${empId}`, {
+                        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/balance/${data.id}`, {
                             headers: { Authorization: `Bearer ${token}` },
                         })
                             .then((res) => {
@@ -84,16 +84,26 @@ export default function LeavePage({ userId }: LeavePageProps) {
                         setBalances([]);
                     }
 
-                    // Fetch leave applications. Admin/HR see all, others see only their own
-                    const appsUrl = (data.role === 'Admin' || data.role === 'HR')
-                        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/applications`
-                        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/applications?employeeId=${empId}`;
-
-                    fetch(appsUrl, { headers: { Authorization: `Bearer ${token}` } })
-                        .then((res) => res.json())
-                        .then((apps) => setApplications(Array.isArray(apps) ? apps : []))
-                        .catch(console.error)
-                        .finally(() => setLoading(false));
+                    // Fetch leave applications - always fetch only current user's applications
+                    if (empId) {
+                        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/applications?userId=${empId}`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        })
+                            .then((res) => res.json())
+                            .then((apps) => {
+                                console.log('Leave applications data:', apps);
+                                setApplications(Array.isArray(apps) ? apps : []);
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching leave applications:', error);
+                                setApplications([]);
+                            })
+                            .finally(() => setLoading(false));
+                    } else {
+                        console.warn('No employee ID available for fetching applications');
+                        setApplications([]);
+                        setLoading(false);
+                    }
                 })
                 .catch((err) => {
                     console.error(err);

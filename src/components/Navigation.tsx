@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import styles from './Navigation.module.css';
 
 interface NavigationProps {
@@ -36,7 +37,26 @@ export default function Navigation({ user }: NavigationProps) {
     return (
         <nav className={`${styles.nav} ${!isOpen ? styles.closed : ''}`}>
             <div className={styles.header}>
-                <h2>ATI Portal</h2>
+                {isOpen ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Image 
+                            src="/thumb-ati.png" 
+                            alt="ATI Logo" 
+                            width={40} 
+                            height={40}
+                            style={{ objectFit: 'contain' }}
+                        />
+                        <h2>ATI Portal</h2>
+                    </div>
+                ) : (
+                    <Image 
+                        src="/thumb-ati.png" 
+                        alt="ATI Logo" 
+                        width={40} 
+                        height={40}
+                        style={{ objectFit: 'contain' }}
+                    />
+                )}
                 <button className={styles.toggleBtn} onClick={() => setIsOpen(!isOpen)}>
                     {isOpen ? '◀' : '▶'}
                 </button>
