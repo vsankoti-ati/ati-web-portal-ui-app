@@ -40,6 +40,10 @@
     background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
 }
 
+.balanceBtn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
 .formCard {
     background: white;
     padding: 2rem;

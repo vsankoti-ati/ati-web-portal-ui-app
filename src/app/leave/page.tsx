@@ -7,7 +7,8 @@ import styles from './leave.module.css';
 
 interface LeaveBalance {
     leave_type: string;
-    leave_balance: number;
+    remaining_days: number;
+    used_days: number;
 }
 
 interface LeaveApplication {
@@ -55,7 +56,8 @@ export default function LeavePage({ userId }: LeavePageProps) {
             .then((res) => res.json())
             .then((data) => {
                     setUserRole(data.role);
-                    const empId = userId || data.employee_id;
+                    console.log('User profile data:', data);
+                    const empId = data.id || data.employee_id;
                     setEmployeeId(empId);
 
                     // Fetch leave balance using employee ID from props or profile
@@ -63,9 +65,23 @@ export default function LeavePage({ userId }: LeavePageProps) {
                         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/balance/${empId}`, {
                             headers: { Authorization: `Bearer ${token}` },
                         })
-                            .then((res) => res.json())
-                            .then((data) => setBalances(Array.isArray(data) ? data : []))
-                            .catch(console.error);
+                            .then((res) => {
+                                if (!res.ok) {
+                                    throw new Error('Failed to fetch leave balance');
+                                }
+                                return res.json();
+                            })
+                            .then((data) => {
+                                console.log('Leave balance data:', data);
+                                setBalances(Array.isArray(data) ? data : []);
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching leave balance:', error);
+                                setBalances([]);
+                            });
+                    } else {
+                        console.warn('No employee ID available for fetching leave balance');
+                        setBalances([]);
                     }
 
                     // Fetch leave applications. Admin/HR see all, others see only their own
@@ -124,12 +140,20 @@ export default function LeavePage({ userId }: LeavePageProps) {
                     <h1>Leave Management</h1>
                     <div className={styles.headerActions}>
                         {(userRole === 'Admin' || userRole === 'HR') && (
-                            <button
-                                className={`${styles.applyBtn} ${styles.approvalBtn}`}
-                                onClick={() => router.push('/leave/approvals')}
-                            >
-                                📋 Approvals
-                            </button>
+                            <>
+                                <button
+                                    className={`${styles.applyBtn} ${styles.balanceBtn}`}
+                                    onClick={() => router.push('/leave/balance')}
+                                >
+                                    ⚖️ Manage Balance
+                                </button>
+                                <button
+                                    className={`${styles.applyBtn} ${styles.approvalBtn}`}
+                                    onClick={() => router.push('/leave/approvals')}
+                                >
+                                    📋 Approvals
+                                </button>
+                            </>
                         )}
                         <button className={styles.applyBtn} onClick={() => setShowApplyForm(!showApplyForm)}>
                             {showApplyForm ? 'Cancel' : '+ Apply for Leave'}
@@ -150,7 +174,6 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                 >
                                     <option value="Earned">Earned Leave</option>
                                     <option value="Holiday">Holiday</option>
-                                    <option value="UnPaid">Unpaid Leave</option>
                                 </select>
                             </div>
                             <div className={styles.formRow}>
@@ -192,13 +215,31 @@ export default function LeavePage({ userId }: LeavePageProps) {
                 <div className={styles.balanceSection}>
                     <h2>Leave Balance</h2>
                     <div className={styles.balanceGrid}>
-                        {balances.map((balance) => (
-                            <div key={balance.leave_type} className={styles.balanceCard}>
-                                <h3>{balance.leave_type}</h3>
-                                <p className={styles.balanceAmount}>{balance.leave_balance}</p>
-                                <p className={styles.balanceLabel}>days available</p>
+                        {balances.length > 0 ? (
+                            balances.map((balance) => (
+                                <div key={balance.leave_type} className={styles.balanceCard}>
+                                    <h3>{balance.leave_type}</h3>
+                                    <p className={styles.balanceAmount}>{balance.remaining_days ?? 0}</p>
+                                    <p className={styles.balanceLabel}>days available</p>
+                                </div>
+                            ))
+                        ) : (
+                            <div className={styles.noData}>
+                                <p>No leave balance data available</p>
+                                <div className={styles.defaultBalances}>
+                                    <div className={styles.balanceCard}>
+                                        <h3>Earned</h3>
+                                        <p className={styles.balanceAmount}>0</p>
+                                        <p className={styles.balanceLabel}>days available</p>
+                                    </div>
+                                    <div className={styles.balanceCard}>
+                                        <h3>Holiday</h3>
+                                        <p className={styles.balanceAmount}>0</p>
+                                        <p className={styles.balanceLabel}>days available</p>
+                                    </div>
+                                </div>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
 
