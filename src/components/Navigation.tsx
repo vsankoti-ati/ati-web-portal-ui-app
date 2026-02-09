@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import styles from './Navigation.module.css';
 
@@ -12,19 +12,28 @@ interface NavigationProps {
 export default function Navigation({ user }: NavigationProps) {
     const router = useRouter();
     const pathname = usePathname();
-    const [isOpen, setIsOpen] = useState(false); // Start closed on mobile
+    const [isOpen, setIsOpen] = useState(true); // Default to open
+    const initialized = useRef(false);
 
     useEffect(() => {
-        // Auto-open on desktop, stay closed on mobile
+        // Only set initial state once
+        if (!initialized.current) {
+            const isMobile = window.innerWidth <= 768;
+            setIsOpen(!isMobile);
+            initialized.current = true;
+        }
+
+        // Handle resize to auto-close/open only when crossing the mobile breakpoint
+        let wasMobile = window.innerWidth <= 768;
         const handleResize = () => {
-            if (window.innerWidth > 768) {
-                setIsOpen(true);
-            } else {
-                setIsOpen(false);
+            const isMobile = window.innerWidth <= 768;
+            // Only change state when crossing the breakpoint
+            if (isMobile !== wasMobile) {
+                setIsOpen(!isMobile);
+                wasMobile = isMobile;
             }
         };
         
-        handleResize(); // Set initial state
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);

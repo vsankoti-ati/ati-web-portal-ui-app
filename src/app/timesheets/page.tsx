@@ -11,6 +11,7 @@ interface Timesheet {
     week_end_date: string;
     status: string;
     submission_date: string | null;
+    submitter?: string;
 }
 
 export default function TimesheetsPage() {
@@ -72,6 +73,9 @@ export default function TimesheetsPage() {
                                 </span>
                             </div>
                             <div className={styles.cardBody}>
+                                {ts.submitter && (
+                                    <p><strong>Submitter:</strong> {ts.submitter}</p>
+                                )}
                                 <p><strong>Period:</strong> {new Date(ts.week_start_date).toLocaleDateString()} - {new Date(ts.week_end_date).toLocaleDateString()}</p>
                                 {ts.submission_date && (
                                     <p><strong>Submitted:</strong> {new Date(ts.submission_date).toLocaleDateString()}</p>

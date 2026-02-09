@@ -17,9 +17,15 @@ interface Timesheet {
 interface TimeEntry {
     id: string;
     project_id: string;
+    project: Project;
     entry_date: string;
     hours: number;
     description: string;
+}
+
+interface Project {
+    id: string;
+    name: string;
 }
 
 export default function TimesheetDetailPage() {
@@ -170,11 +176,11 @@ export default function TimesheetDetailPage() {
                                     {entries.map((entry) => (
                                         <div key={entry.id} className={styles.entryCard}>
                                             <div className={styles.entryInfo}>
-                                                <p className={styles.projectName}>Project ID: {entry.project_id}</p>
-                                                {entry.notes && <p className={styles.notes}>{entry.notes}</p>}
+                                                <p className={styles.projectName}>Project: {entry.project.name}</p>
+                                                {entry.description && <p className={styles.notes}>{entry.description}</p>}
                                             </div>
                                             <div className={styles.hours}>
-                                                {entry.hours_worked} hrs
+                                                {entry.hours} hrs
                                             </div>
                                         </div>
                                     ))}
