@@ -12,10 +12,29 @@ interface NavigationProps {
 export default function Navigation({ user }: NavigationProps) {
     const router = useRouter();
     const pathname = usePathname();
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false); // Start closed on mobile
+
+    useEffect(() => {
+        // Auto-open on desktop, stay closed on mobile
+        const handleResize = () => {
+            if (window.innerWidth > 768) {
+                setIsOpen(true);
+            } else {
+                setIsOpen(false);
+            }
+        };
+        
+        handleResize(); // Set initial state
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleLogout = () => {
+        // Clear all authentication data
         localStorage.removeItem('token');
+        localStorage.clear(); // Clear all localStorage to remove any cached user data
+        
+        // Navigate to login page
         router.push('/login');
     };
 

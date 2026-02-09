@@ -214,3 +214,160 @@
     font-size: 1.5rem;
     color: #667eea;
 }
+
+/* Mobile and Tablet Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .headerActions {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .applyBtn {
+        width: 100%;
+        padding: 0.9rem;
+        font-size: 0.95rem;
+    }
+
+    .formCard {
+        padding: 1.5rem;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .balanceGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .table {
+        overflow-x: auto;
+    }
+
+    .tableHeader,
+    .tableRow {
+        grid-template-columns: repeat(5, minmax(100px, 1fr));
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    .tableHeader div,
+    .tableRow div {
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.3rem;
+    }
+
+    .applyBtn {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+
+    .formCard {
+        padding: 1rem;
+    }
+
+    .tableHeader,
+    .tableRow {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+}
+/* Mobile and Tablet Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .headerActions {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .applyBtn {
+        width: 100%;
+        padding: 0.9rem;
+        font-size: 0.95rem;
+    }
+
+    .formCard {
+        padding: 1.5rem;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .balanceGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .table {
+        overflow-x: auto;
+    }
+
+    .tableHeader,
+    .tableRow {
+        grid-template-columns: repeat(5, minmax(100px, 1fr));
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    .tableHeader div,
+    .tableRow div {
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.3rem;
+    }
+
+    .applyBtn {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+
+    .formCard {
+        padding: 1rem;
+    }
+
+    .tableHeader,
+    .tableRow {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+}

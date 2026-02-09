@@ -15,6 +15,7 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 .main {
@@ -23,4 +24,29 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 1rem;
+}
+
+/* Global responsive styles */
+* {
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  .main {
+    padding: 0.5rem;
+  }
+
+  /* Make forms and inputs responsive */
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px; /* Prevents zoom on iOS */
+    max-width: 100%;
+  }
 }

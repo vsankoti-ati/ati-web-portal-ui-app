@@ -179,3 +179,132 @@
 .logoutBtn:hover {
     background: rgba(231, 76, 60, 1);
 }
+/* Tablet styles */
+@media (max-width: 1024px) {
+    .nav {
+        width: 70px;
+    }
+    
+    .nav.closed {
+        width: 70px;
+    }
+    
+    .header h2,
+    .userInfo,
+    .navList a span:not(.icon),
+    .logoutBtn {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        width: 100%;
+        flex-direction: row;
+        z-index: 1001;
+        overflow: visible;
+    }
+    
+    .nav.closed {
+        width: 100%;
+        height: 60px;
+    }
+    
+    .header {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        min-height: 60px;
+        border-bottom: none;
+    }
+    
+    .nav.closed .header {
+        padding: 0.5rem 1rem;
+    }
+    
+    .header h2 {
+        font-size: 1.1rem;
+        opacity: 1;
+        width: auto;
+        overflow: visible;
+    }
+    
+    .nav.closed .header h2 {
+        opacity: 1;
+        width: auto;
+    }
+    
+    .toggleBtn {
+        order: 1;
+    }
+    
+    .userInfo {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: #2c3e50;
+        padding: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav:not(.closed) .userInfo {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .navList {
+        position: absolute;
+        top: 120px;
+        left: 0;
+        right: 0;
+        background: #2c3e50;
+        max-height: calc(100vh - 180px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+        padding: 0.5rem 0;
+    }
+    
+    .nav:not(.closed) .navList {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .navList a span:not(.icon) {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .logoutBtn {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        border-radius: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+    
+    .nav:not(.closed) .logoutBtn {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}

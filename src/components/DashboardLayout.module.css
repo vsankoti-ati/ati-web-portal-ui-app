@@ -19,3 +19,25 @@
     font-size: 1.5rem;
     color: #667eea;
 }
+
+/* Tablet styles */
+@media (max-width: 1024px) {
+    .main {
+        margin-left: 70px;
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .main {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 1rem;
+        width: 100%;
+    }
+}
