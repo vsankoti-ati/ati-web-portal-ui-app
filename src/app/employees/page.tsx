@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './employees.module.css';
 
 interface Employee {
@@ -64,7 +65,7 @@ export default function EmployeesPage() {
     );
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading employees..." />;
     }
 
     if (accessDenied) {
@@ -102,31 +103,55 @@ export default function EmployeesPage() {
                     />
                 </div>
 
-                <div className={styles.employeeGrid}>
-                    {filteredEmployees.map((emp) => (
-                        <div
-                            key={emp.id}
-                            className={styles.employeeCard}
-                            onClick={() => router.push(`/employees/${emp.id}`)}
-                        >
-                            <div className={styles.avatar}>
-                                {emp.first_name?.[0] || ''}{emp.last_name?.[0] || ''}
-                            </div>
-                            <div className={styles.info}>
-                                <h3>{emp.first_name || ''} {emp.last_name || ''}</h3>
-                                <p className={styles.role}>{emp.role || 'N/A'}</p>
-                                <p className={styles.email}>{emp.email_id || 'N/A'}</p>
-                                <p className={styles.phone}>{emp.phone_number || 'N/A'}</p>
-                            </div>
-                            <div className={`${styles.status} ${emp.is_active ? styles.active : styles.inactive}`}>
-                                {emp.is_active ? 'Active' : 'Inactive'}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {filteredEmployees.length === 0 && (
+                {filteredEmployees.length === 0 ? (
                     <div className={styles.empty}>No employees found</div>
+                ) : (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.employeeTable}>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredEmployees.map((emp) => (
+                                    <tr key={emp.id}>
+                                        <td>
+                                            <div className={styles.nameCell}>
+                                                <div className={styles.avatar}>
+                                                    {emp.first_name?.[0] || ''}{emp.last_name?.[0] || ''}
+                                                </div>
+                                                <span className={styles.employeeName}>
+                                                    {emp.first_name || ''} {emp.last_name || ''}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>{emp.role || 'N/A'}</td>
+                                        <td>{emp.email_id || 'N/A'}</td>
+                                        <td>{emp.phone_number || 'N/A'}</td>
+                                        <td>
+                                            <span className={`${styles.statusBadge} ${emp.is_active ? styles.active : styles.inactive}`}>
+                                                {emp.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className={styles.viewBtn}
+                                                onClick={() => router.push(`/employees/${emp.id}`)}
+                                            >
+                                                View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
         </DashboardLayout>

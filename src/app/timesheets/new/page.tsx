@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './new-timesheet.module.css';
 
 interface Project {
@@ -24,6 +25,7 @@ interface TimeEntry {
 export default function NewTimesheetPage() {
     const router = useRouter();
     const [projects, setProjects] = useState<Project[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [entries, setEntries] = useState<TimeEntry[]>([{
         project_id: '',
         sunday: 0,
@@ -94,6 +96,7 @@ export default function NewTimesheetPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const token = localStorage.getItem('token');
 
         try {
@@ -157,18 +160,22 @@ export default function NewTimesheetPage() {
                 }
 
                 router.push('/timesheets');
+            } else {
+                setIsSubmitting(false);
             }
         } catch (error) {
             console.error('Error creating timesheet:', error);
+            setIsSubmitting(false);
         }
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading projects..." />;
     }
 
     return (
         <DashboardLayout>
+            {isSubmitting && <LoadingSpinner fullScreen message="Creating timesheet..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <button className={styles.backBtn} onClick={() => router.push('/timesheets')}>

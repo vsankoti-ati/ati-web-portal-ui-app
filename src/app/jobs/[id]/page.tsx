@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './job-detail.module.css';
 
 interface JobOpening {
@@ -24,6 +25,7 @@ export default function JobDetailPage() {
     const [job, setJob] = useState<JobOpening | null>(null);
     const [loading, setLoading] = useState(true);
     const [showReferralForm, setShowReferralForm] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         candidate_name: '',
         candidate_email: '',
@@ -51,6 +53,7 @@ export default function JobDetailPage() {
 
     const handleSubmitReferral = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const token = localStorage.getItem('token');
 
         try {
@@ -80,11 +83,13 @@ export default function JobDetailPage() {
         } catch (error) {
             console.error('Error submitting referral:', error);
             alert('Failed to submit referral');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading job details..." />;
     }
 
     if (!job) {
@@ -93,6 +98,7 @@ export default function JobDetailPage() {
 
     return (
         <DashboardLayout>
+            {isSubmitting && <LoadingSpinner fullScreen message="Submitting referral..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <button className={styles.backBtn} onClick={() => router.push('/jobs')}>

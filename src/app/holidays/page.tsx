@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './holidays.module.css';
 
 interface Holiday {
@@ -17,7 +18,7 @@ export default function HolidaysPage() {
     const router = useRouter();
     const [holidays, setHolidays] = useState<Holiday[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedYear, setSelectedYear] = useState(2025);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedClient, setSelectedClient] = useState<string>('');
     const [userRole, setUserRole] = useState('');
 
@@ -71,7 +72,7 @@ export default function HolidaysPage() {
     }, {} as Record<string, Holiday[]>);
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading holidays..." />;
     }
 
     return (
@@ -107,44 +108,52 @@ export default function HolidaysPage() {
                             className={styles.yearSelect}
                             aria-label="Select Year"
                         >
-                            <option value={2024}>2024</option>
-                            <option value={2025}>2025</option>
-                            <option value={2026}>2026</option>
+                             <option value={new Date().getFullYear() - 1}>{new Date().getFullYear() - 1}</option>
+                            <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+                           
                         </select>
                     </div>
-                </div>
-
-                <div className={styles.calendar}>
-                    {Object.entries(groupedHolidays).map(([month, monthHolidays]) => (
-                        <div key={month} className={styles.monthSection}>
-                            <h2>{month}</h2>
-                            <div className={styles.holidayList}>
-                                {monthHolidays.map((holiday) => (
-                                    <div key={holiday.id} className={styles.holidayCard}>
-                                        <div className={styles.dateBox}>
-                                            <span className={styles.day}>
-                                                {new Date(holiday.date).getDate()}
-                                            </span>
-                                            <span className={styles.weekday}>
-                                                {new Date(holiday.date).toLocaleDateString('en-US', { weekday: 'short' })}
-                                            </span>
-                                        </div>
-                                        <div className={styles.holidayInfo}>
-                                            <h3>{holiday.occasion}</h3>
-                                            <p>{holiday.client}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
                 </div>
 
                 {selectedClient === '' ? (
                     <div className={styles.empty}>Please select a client to view holidays for {selectedYear}</div>
                 ) : filteredHolidays.length === 0 ? (
                     <div className={styles.empty}>No holidays found for {selectedClient} in {selectedYear}</div>
-                ) : null}
+                ) : (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.holidayTable}>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Occasion</th>
+                                    <th>Client</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredHolidays.map((holiday) => (
+                                    <tr key={holiday.id}>
+                                        <td>
+                                            <div className={styles.dateCell}>
+                                                <span className={styles.dateNumber}>
+                                                    {new Date(holiday.date).getDate()}
+                                                </span>
+                                                <span className={styles.monthName}>
+                                                    {new Date(holiday.date).toLocaleString('default', { month: 'short' })}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className={styles.weekdayCell}>
+                                            {new Date(holiday.date).toLocaleDateString('en-US', { weekday: 'long' })}
+                                        </td>
+                                        <td className={styles.occasionCell}>{holiday.occasion}</td>
+                                        <td>{holiday.client}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </DashboardLayout>
     );

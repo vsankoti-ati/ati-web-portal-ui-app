@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './projects.module.css';
 
 interface Project {
@@ -56,7 +57,7 @@ export default function ProjectsPage() {
     }, [router]);
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading projects..." />;
     }
 
     const canManageProjects = userRole === 'Admin' || userRole === 'HR';
@@ -73,33 +74,7 @@ export default function ProjectsPage() {
                     )}
                 </div>
 
-                <div className={styles.projectGrid}>
-                    {projects?.map((project) => (
-                        <div key={project.id} className={styles.projectCard}>
-                            <div className={styles.cardHeader}>
-                                <h2>{project.name}</h2>
-                                <span className={`${styles.status} ${styles[project.status]}`}>
-                                    {project.status}
-                                </span>
-                            </div>
-                            <p className={styles.description}>{project.description}</p>
-                            <div className={styles.dates}>
-                                <div className={styles.dateItem}>
-                                    <label>Start Date</label>
-                                    <p>{new Date(project.start_date).toLocaleDateString()}</p>
-                                </div>
-                                {project.end_date && (
-                                    <div className={styles.dateItem}>
-                                        <label>End Date</label>
-                                        <p>{new Date(project.end_date).toLocaleDateString()}</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {projects.length === 0 && (
+                {projects.length === 0 ? (
                     <div className={styles.empty}>
                         <p>No projects found</p>
                         {canManageProjects && (
@@ -107,6 +82,46 @@ export default function ProjectsPage() {
                                 Create Your First Project
                             </button>
                         )}
+                    </div>
+                ) : (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.projectTable}>
+                            <thead>
+                                <tr>
+                                    <th>Project Name</th>
+                                    <th>Description</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {projects.map((project) => (
+                                    <tr key={project.id}>
+                                        <td className={styles.projectName}>{project.name}</td>
+                                        <td className={styles.descriptionCell}>{project.description}</td>
+                                        <td>{new Date(project.start_date).toLocaleDateString()}</td>
+                                        <td>
+                                            {project.end_date ? new Date(project.end_date).toLocaleDateString() : 'Ongoing'}
+                                        </td>
+                                        <td>
+                                            <span className={`${styles.statusBadge} ${styles[project.status]}`}>
+                                                {project.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className={styles.viewBtn}
+                                                onClick={() => router.push(`/projects/${project.id}`)}
+                                            >
+                                                View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>

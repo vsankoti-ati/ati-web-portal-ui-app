@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './project-detail.module.css';
 
 interface Project {
@@ -21,6 +22,7 @@ export default function ProjectDetailPage() {
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [userRole, setUserRole] = useState('');
     const [formData, setFormData] = useState<Partial<Project>>({});
 
@@ -53,6 +55,7 @@ export default function ProjectDetailPage() {
     }, [router, params.id]);
 
     const handleSave = async () => {
+        setIsSaving(true);
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/${params.id}`, {
@@ -71,11 +74,13 @@ export default function ProjectDetailPage() {
             }
         } catch (error) {
             console.error('Error updating project:', error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading project details..." />;
     }
 
     if (!project) {
@@ -86,6 +91,7 @@ export default function ProjectDetailPage() {
 
     return (
         <DashboardLayout>
+            {isSaving && <LoadingSpinner fullScreen message="Saving changes..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <button className={styles.backBtn} onClick={() => router.push('/projects')}>
@@ -94,7 +100,7 @@ export default function ProjectDetailPage() {
                     {canEdit && (
                         <div className={styles.actions}>
                             {!isEditing ? (
-                                <button className={styles.editBtn} onClick={() => setIsEditing(true)}>
+                                <button className={styles.editBtn} onClick={() => setIsEditing(true)} disabled={isSaving}>
                                     Edit Project
                                 </button>
                             ) : (
@@ -102,11 +108,11 @@ export default function ProjectDetailPage() {
                                     <button className={styles.cancelBtn} onClick={() => {
                                         setIsEditing(false);
                                         setFormData(project);
-                                    }}>
+                                    }} disabled={isSaving}>
                                         Cancel
                                     </button>
-                                    <button className={styles.saveBtn} onClick={handleSave}>
-                                        Save Changes
+                                    <button className={styles.saveBtn} onClick={handleSave} disabled={isSaving}>
+                                        {isSaving ? 'Saving...' : 'Save Changes'}
                                     </button>
                                 </>
                             )}

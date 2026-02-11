@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function SignupPage() {
     const router = useRouter();
@@ -15,6 +16,7 @@ export default function SignupPage() {
     });
     const [error, setError] = useState('');
     const [showToast, setShowToast] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,6 +24,8 @@ export default function SignupPage() {
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError('');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`, {
                 method: 'POST',
@@ -33,6 +37,7 @@ export default function SignupPage() {
                 // Show success toast
                 setShowToast(true);
                 setError('');
+                setIsLoading(false);
                 
                 // Redirect to login after 5 seconds
                 setTimeout(() => {
@@ -40,14 +45,17 @@ export default function SignupPage() {
                 }, 5000);
             } else {
                 setError('Signup failed');
+                setIsLoading(false);
             }
         } catch (err) {
             setError('Signup failed');
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="main">
+            {isLoading && <LoadingSpinner fullScreen message="Creating account..." />}
             {/* Success Toast Notification */}
             {showToast && (
                 <div style={{
@@ -90,7 +98,9 @@ export default function SignupPage() {
                     <input name="password" type="password" placeholder="Password" onChange={handleChange} required style={{ padding: '0.5rem' }} />
                     <input name="first_name" placeholder="First Name" onChange={handleChange} required style={{ padding: '0.5rem' }} />
                     <input name="last_name" placeholder="Last Name" onChange={handleChange} required style={{ padding: '0.5rem' }} />
-                    <button type="submit" style={{ padding: '0.5rem', cursor: 'pointer' }}>Sign Up</button>
+                    <button type="submit" style={{ padding: '0.5rem', cursor: 'pointer' }} disabled={isLoading}>
+                        {isLoading ? 'Signing up...' : 'Sign Up'}
+                    </button>
                 </form>
                 <div style={{ marginTop: '1rem' }}>
                     <button onClick={() => router.push('/login')}>Back to Login</button>

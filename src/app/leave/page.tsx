@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './leave.module.css';
 
 interface LeaveBalance {
@@ -30,6 +31,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
     const [balances, setBalances] = useState<LeaveBalance[]>([]);
     const [applications, setApplications] = useState<LeaveApplication[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isApplying, setIsApplying] = useState(false);
     const [showApplyForm, setShowApplyForm] = useState(false);
     const [userRole, setUserRole] = useState('');
     const [employeeId, setEmployeeId] = useState(userId || '');
@@ -115,6 +117,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsApplying(true);
         const token = localStorage.getItem('token');
         const request = { ...formData, employee_id: employeeId };
 
@@ -136,15 +139,18 @@ export default function LeavePage({ userId }: LeavePageProps) {
             }
         } catch (error) {
             console.error('Error applying for leave:', error);
+        } finally {
+            setIsApplying(false);
         }
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading leave information..." />;
     }
 
     return (
         <DashboardLayout>
+            {isApplying && <LoadingSpinner fullScreen message="Submitting leave application..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h1>Leave Management</h1>

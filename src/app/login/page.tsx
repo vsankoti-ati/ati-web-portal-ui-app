@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function LoginPage() {
 
@@ -10,9 +11,12 @@ export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError('');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
                 method: 'POST',
@@ -26,14 +30,17 @@ export default function LoginPage() {
                 router.push('/');
             } else {
                 setError('Invalid credentials');
+                setIsLoading(false);
             }
         } catch (err) {
             setError('Login failed');
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="main">
+            {isLoading && <LoadingSpinner fullScreen message="Logging in..." />}
             <div style={{ padding: '2rem', border: '1px solid #ccc', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
                     <Image 
@@ -63,7 +70,9 @@ export default function LoginPage() {
                         required
                         style={{ padding: '0.5rem' }}
                     />
-                    <button type="submit" style={{ padding: '0.5rem', cursor: 'pointer' }}>Login</button>
+                    <button type="submit" style={{ padding: '0.5rem', cursor: 'pointer' }} disabled={isLoading}>
+                        {isLoading ? 'Logging in...' : 'Login'}
+                    </button>
                 </form>
                 <div style={{ marginTop: '1rem' }}>
                     <button onClick={() => router.push('/signup')}>Sign Up</button>

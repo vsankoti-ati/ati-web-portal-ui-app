@@ -39,101 +39,120 @@
     border-color: #667eea;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-}
-
-.docCard {
+.tableWrapper {
     background: white;
-    padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    display: flex;
-    gap: 1rem;
-    transition: all 0.3s;
+    overflow: hidden;
 }
 
-.docCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+.documentTable {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.icon {
-    font-size: 3rem;
-    flex-shrink: 0;
+.documentTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
 
-.docInfo {
-    flex: 1;
+.documentTable th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.docInfo h3 {
-    margin: 0 0 0.5rem 0;
+.documentTable tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
+
+.documentTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.documentTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.documentTable td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
     color: #2c3e50;
-    font-size: 1.1rem;
 }
 
-.description {
-    margin: 0 0 1rem 0;
+.iconCell {
+    font-size: 2rem;
+    text-align: center;
+    width: 80px;
+}
+
+.docName {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.descriptionCell {
+    max-width: 250px;
     color: #7f8c8d;
     font-size: 0.9rem;
-    line-height: 1.5;
 }
 
-.meta {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.category {
-    padding: 0.25rem 0.75rem;
+.categoryBadge {
+    padding: 0.4rem 0.8rem;
     background: #e3f2fd;
     color: #1565c0;
-    border-radius: 12px;
+    border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
 }
 
-.size {
-    color: #7f8c8d;
-    font-size: 0.85rem;
-}
-
-.actions {
+.actionButtons {
     display: flex;
     gap: 0.5rem;
 }
 
-.viewBtn,
-.downloadBtn {
+.viewBtn {
     padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s;
-}
-
-.viewBtn {
-    background: #667eea;
-    color: white;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .viewBtn:hover {
-    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
 }
 
 .downloadBtn {
+    padding: 0.5rem 1rem;
     background: #f8f9fa;
     color: #667eea;
+    border: 2px solid #667eea;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .downloadBtn:hover {
-    background: #e9ecef;
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
 }
 
 .empty {

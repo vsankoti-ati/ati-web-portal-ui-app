@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './new-employee.module.css';
 
 export default function NewEmployeePage() {
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -20,6 +22,7 @@ export default function NewEmployeePage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const token = localStorage.getItem('token');
 
         try {
@@ -34,14 +37,18 @@ export default function NewEmployeePage() {
 
             if (res.ok) {
                 router.push('/employees');
+            } else {
+                setIsSubmitting(false);
             }
         } catch (error) {
             console.error('Error creating employee:', error);
+            setIsSubmitting(false);
         }
     };
 
     return (
         <DashboardLayout>
+            {isSubmitting && <LoadingSpinner fullScreen message="Creating employee..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <button className={styles.backBtn} onClick={() => router.push('/employees')}>
@@ -142,11 +149,11 @@ export default function NewEmployeePage() {
                         </div>
 
                         <div className={styles.actions}>
-                            <button type="button" className={styles.cancelBtn} onClick={() => router.push('/employees')}>
+                            <button type="button" className={styles.cancelBtn} onClick={() => router.push('/employees')} disabled={isSubmitting}>
                                 Cancel
                             </button>
-                            <button type="submit" className={styles.submitBtn}>
-                                Create Employee
+                            <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+                                {isSubmitting ? 'Creating...' : 'Create Employee'}
                             </button>
                         </div>
                     </form>

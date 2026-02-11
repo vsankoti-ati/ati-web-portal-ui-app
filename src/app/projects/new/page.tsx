@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './new-project.module.css';
 
 export default function NewProjectPage() {
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -17,6 +19,7 @@ export default function NewProjectPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
         const token = localStorage.getItem('token');
 
         try {
@@ -34,14 +37,18 @@ export default function NewProjectPage() {
 
             if (res.ok) {
                 router.push('/projects');
+            } else {
+                setIsSubmitting(false);
             }
         } catch (error) {
             console.error('Error creating project:', error);
+            setIsSubmitting(false);
         }
     };
 
     return (
         <DashboardLayout>
+            {isSubmitting && <LoadingSpinner fullScreen message="Creating project..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <button className={styles.backBtn} onClick={() => router.push('/projects')}>
@@ -107,11 +114,11 @@ export default function NewProjectPage() {
                         </div>
 
                         <div className={styles.actions}>
-                            <button type="button" className={styles.cancelBtn} onClick={() => router.push('/projects')}>
+                            <button type="button" className={styles.cancelBtn} onClick={() => router.push('/projects')} disabled={isSubmitting}>
                                 Cancel
                             </button>
-                            <button type="submit" className={styles.submitBtn}>
-                                Create Project
+                            <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+                                {isSubmitting ? 'Creating...' : 'Create Project'}
                             </button>
                         </div>
                     </form>

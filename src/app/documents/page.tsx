@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './documents.module.css';
 
 interface Document {
@@ -68,7 +69,7 @@ export default function DocumentsPage() {
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading documents..." />;
     }
 
     return (
@@ -104,28 +105,42 @@ export default function DocumentsPage() {
                     </div>
                 </div>
 
-                <div className={styles.grid}>
-                    {documents.map((doc) => (
-                        <div key={doc.id} className={styles.docCard}>
-                            <div className={styles.icon}>{getIcon(doc.type)}</div>
-                            <div className={styles.docInfo}>
-                                <h3>{doc.name}</h3>
-                                <p className={styles.description}>{doc.description}</p>
-                                <div className={styles.meta}>
-                                    <span className={styles.category}>{doc.category}</span>
-                                    <span className={styles.size}>{formatFileSize(doc.file_size)}</span>
-                                </div>
-                                <div className={styles.actions}>
-                                    <button className={styles.viewBtn}>View</button>
-                                    <button className={styles.downloadBtn}>Download</button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {documents.length === 0 && (
+                {documents.length === 0 ? (
                     <div className={styles.empty}>No documents found</div>
+                ) : (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.documentTable}>
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Document Name</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>File Size</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {documents.map((doc) => (
+                                    <tr key={doc.id}>
+                                        <td className={styles.iconCell}>{getIcon(doc.type)}</td>
+                                        <td className={styles.docName}>{doc.name}</td>
+                                        <td className={styles.descriptionCell}>{doc.description}</td>
+                                        <td>
+                                            <span className={styles.categoryBadge}>{doc.category}</span>
+                                        </td>
+                                        <td>{formatFileSize(doc.file_size)}</td>
+                                        <td>
+                                            <div className={styles.actionButtons}>
+                                                <button className={styles.viewBtn}>View</button>
+                                                <button className={styles.downloadBtn}>Download</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
         </DashboardLayout>

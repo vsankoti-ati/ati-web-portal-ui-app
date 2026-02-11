@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './jobs.module.css';
 
 interface JobOpening {
@@ -47,9 +48,7 @@ export default function JobsPage() {
 
     if (loading) {
         return (
-            <DashboardLayout>
-                <div className={styles.loading}>Loading...</div>
-            </DashboardLayout>
+            <LoadingSpinner fullScreen message="Loading job openings..." />
         );
     }
 
@@ -60,36 +59,55 @@ export default function JobsPage() {
                     <h1>Job Openings & Referrals</h1>
                     <button
                         onClick={() => router.push('/jobs/refer')}
-                        className={styles.button}
+                        className={styles.referBtn}
                     >
                         Refer a Candidate
                     </button>
                 </div>
 
-                <div className={styles.grid}>
-                    {jobs.length === 0 ? (
-                        <div className={styles.empty}>No job openings available at this time.</div>
-                    ) : (
-                        jobs.map((job) => (
-                            <div
-                                key={job.id}
-                                className={styles.card}
-                                onClick={() => router.push(`/jobs/${job.id}`)}
-                            >
-                                <h2>{job.title}</h2>
-                                <div className={styles.details}>
-                                    <span className={styles.tag}>{job.department}</span>
-                                    <span className={styles.tag}>{job.location}</span>
-                                    <span className={styles.tag}>{job.employment_type}</span>
-                                </div>
-                                <div className={styles.footer}>
-                                    <span>Exp: {job.experience_required}</span>
-                                    <span>Posted: {new Date(job.posted_date).toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
+                {jobs.length === 0 ? (
+                    <div className={styles.empty}>No job openings available at this time.</div>
+                ) : (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.jobTable}>
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Department</th>
+                                    <th>Location</th>
+                                    <th>Employment Type</th>
+                                    <th>Experience Required</th>
+                                    <th>Posted Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {jobs.map((job) => (
+                                    <tr key={job.id}>
+                                        <td className={styles.jobTitle}>{job.title}</td>
+                                        <td>
+                                            <span className={styles.departmentBadge}>{job.department}</span>
+                                        </td>
+                                        <td>{job.location}</td>
+                                        <td>
+                                            <span className={styles.typeBadge}>{job.employment_type}</span>
+                                        </td>
+                                        <td>{job.experience_required}</td>
+                                        <td>{new Date(job.posted_date).toLocaleDateString()}</td>
+                                        <td>
+                                            <button
+                                                className={styles.viewBtn}
+                                                onClick={() => router.push(`/jobs/${job.id}`)}
+                                            >
+                                                View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </DashboardLayout>
     );

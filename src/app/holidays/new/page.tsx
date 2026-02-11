@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './new-holidays.module.css';
 
 interface HolidayRow {
@@ -16,6 +17,7 @@ export default function NewHolidaysPage() {
     const router = useRouter();
     const [userRole, setUserRole] = useState('');
     const [loading, setLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [year, setYear] = useState(new Date().getFullYear());
     const [client, setClient] = useState('');
     const [holidays, setHolidays] = useState<HolidayRow[]>([
@@ -62,6 +64,7 @@ export default function NewHolidaysPage() {
     };
 
     const handleSubmit = async () => {
+        setIsSubmitting(true);
         const token = localStorage.getItem('token');
         
         // Filter out empty rows
@@ -71,11 +74,13 @@ export default function NewHolidaysPage() {
 
         if (validHolidays.length === 0) {
             alert('Please add at least one holiday with date and occasion');
+            setIsSubmitting(false);
             return;
         }
 
         if (!client && validHolidays.some((h) => !h.client)) {
             alert('Please specify a client');
+            setIsSubmitting(false);
             return;
         }
 
@@ -101,15 +106,17 @@ export default function NewHolidaysPage() {
                 router.push('/holidays');
             } else {
                 alert('Failed to add holidays');
+                setIsSubmitting(false);
             }
         } catch (error) {
             console.error('Error adding holidays:', error);
             alert('Error adding holidays');
+            setIsSubmitting(false);
         }
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading..." />;
     }
 
     if (userRole !== 'Admin' && userRole !== 'HR') {
@@ -118,6 +125,7 @@ export default function NewHolidaysPage() {
 
     return (
         <DashboardLayout>
+            {isSubmitting && <LoadingSpinner fullScreen message="Saving holidays..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <button
@@ -127,8 +135,8 @@ export default function NewHolidaysPage() {
                         ← Back to Holidays
                     </button>
                     <h1>Add Holidays for {year}</h1>
-                    <button className={styles.submitBtn} onClick={handleSubmit}>
-                        💾 Submit All
+                    <button className={styles.submitBtn} onClick={handleSubmit} disabled={isSubmitting}>
+                        {isSubmitting ? '💾 Saving...' : '💾 Submit All'}
                     </button>
                 </div>
 
@@ -142,11 +150,8 @@ export default function NewHolidaysPage() {
                                 className={styles.input}
                                 aria-label="Year"
                             >
-                                <option value={2024}>2024</option>
-                                <option value={2025}>2025</option>
-                                <option value={2026}>2026</option>
-                                <option value={2027}>2027</option>
-                                <option value={2028}>2028</option>
+                                <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+                                <option value={new Date().getFullYear() - 1}>{new Date().getFullYear() - 1}</option>
                             </select>
                         </div>
                         <div className={styles.formGroup}>

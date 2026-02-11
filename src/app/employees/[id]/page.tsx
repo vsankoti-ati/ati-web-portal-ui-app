@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './employee-detail.module.css';
 
 interface Employee {
@@ -23,6 +24,7 @@ export default function EmployeeDetailPage() {
     const [employee, setEmployee] = useState<Employee | null>(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [formData, setFormData] = useState<Partial<Employee>>({});
 
     useEffect(() => {
@@ -77,6 +79,7 @@ export default function EmployeeDetailPage() {
     }, [router, params.id]);
 
     const handleSave = async () => {
+        setIsSaving(true);
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employees/${params.id}`, {
@@ -98,11 +101,13 @@ export default function EmployeeDetailPage() {
         } catch (error) {
             console.error('Error updating employee:', error);
             alert('Failed to update employee. Please try again.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading employee details..." />;
     }
 
     if (!employee) {
@@ -111,6 +116,7 @@ export default function EmployeeDetailPage() {
 
     return (
         <DashboardLayout>
+            {isSaving && <LoadingSpinner fullScreen message="Saving changes..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <button className={styles.backBtn} onClick={() => router.push('/')}>
@@ -118,7 +124,7 @@ export default function EmployeeDetailPage() {
                     </button>
                     <div className={styles.actions}>
                         {!isEditing ? (
-                            <button className={styles.editBtn} onClick={() => setIsEditing(true)}>
+                            <button className={styles.editBtn} onClick={() => setIsEditing(true)} disabled={isSaving}>
                                 Edit Profile
                             </button>
                         ) : (
@@ -126,11 +132,11 @@ export default function EmployeeDetailPage() {
                                 <button className={styles.cancelBtn} onClick={() => {
                                     setIsEditing(false);
                                     setFormData(employee);
-                                }}>
+                                }} disabled={isSaving}>
                                     Cancel
                                 </button>
-                                <button className={styles.saveBtn} onClick={handleSave}>
-                                    Save Changes
+                                <button className={styles.saveBtn} onClick={handleSave} disabled={isSaving}>
+                                    {isSaving ? 'Saving...' : 'Save Changes'}
                                 </button>
                             </>
                         )}

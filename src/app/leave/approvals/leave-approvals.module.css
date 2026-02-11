@@ -1,6 +1,7 @@
 .container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .header {
@@ -39,162 +40,135 @@
     border-color: #667eea;
 }
 
-.applicationsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 1.5rem;
-}
-
-.applicationCard {
+/* Table Styles */
+.tableWrapper {
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    transition: all 0.3s;
 }
 
-.applicationCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+.applicationsTable {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.cardHeader {
-    padding: 1.5rem;
-    background: #f8f9fa;
-    border-bottom: 2px solid #e0e0e0;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+.applicationsTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
 
-.cardHeader h3 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-    font-size: 1.1rem;
-}
-
-.leaveType {
-    margin: 0;
-    color: #667eea;
+.applicationsTable th {
+    padding: 1rem;
+    text-align: left;
     font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.status {
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.status.pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status.approved {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status.rejected {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.cardBody {
-    padding: 1.5rem;
-}
-
-.dateRange {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.dateRange label,
-.comment label,
-.appliedDate label {
-    display: block;
-    color: #7f8c8d;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.dateRange p,
-.comment p,
-.appliedDate p {
-    margin: 0;
-    color: #2c3e50;
-    font-weight: 500;
+.applicationsTable tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
 }
 
-.comment {
-    background: #f8f9fa;
+.applicationsTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.applicationsTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.applicationsTable td {
     padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.comment p {
-    font-weight: 400;
-    line-height: 1.5;
-}
-
-.appliedDate {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e0e0e0;
-}
-
-.actions {
-    padding: 1rem 1.5rem;
-    background: #f8f9fa;
-    border-top: 2px solid #e0e0e0;
-    display: flex;
-    gap: 1rem;
-}
-
-.approveBtn,
-.rejectBtn {
-    flex: 1;
-    padding: 0.8rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
+    vertical-align: middle;
     font-size: 0.95rem;
-    transition: all 0.3s;
+    color: #2c3e50;
+}
+
+.employeeName {
+    font-weight: 600;
+    color: #667eea;
+}
+
+.reasonCell {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.statusBadge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.statusBadge.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.statusBadge.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.statusBadge.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.actionsCell {
+    white-space: nowrap;
+}
+
+.actionButtons {
     display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 0.5rem;
 }
 
-.approveBtn {
+.tableApproveBtn,
+.tableRejectBtn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.tableApproveBtn {
     background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
     color: white;
 }
 
-.approveBtn:hover {
+.tableApproveBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
 }
 
-.rejectBtn {
+.tableRejectBtn {
     background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     color: white;
 }
 
-.rejectBtn:hover {
+.tableRejectBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
 }
+
+.noActions {
+    color: #95a5a6;
+}
+
+
 
 .empty {
     text-align: center;
@@ -219,3 +193,181 @@
 .error {
     color: #e74c3c;
 }
+
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modalHeader {
+    padding: 1.5rem;
+    border-bottom: 2px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.closeBtn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modalBody {
+    padding: 1.5rem;
+}
+
+.modalBody label {
+    display: block;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.modalTextarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s;
+    min-height: 120px;
+}
+
+.modalTextarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modalFooter {
+    padding: 1.5rem;
+    border-top: 2px solid #e0e0e0;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.modalCancelBtn {
+    padding: 0.8rem 1.5rem;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.modalCancelBtn:hover {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+}
+
+.modalApproveBtn {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modalApproveBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+}
+
+.modalRejectBtn {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modalRejectBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+

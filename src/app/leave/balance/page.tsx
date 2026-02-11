@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './balance.module.css';
 
 interface Employee {
@@ -91,7 +92,7 @@ export default function LeaveBalancePage() {
             if (res.ok) {
                 setMessage({ type: 'success', text: 'Leave balance updated successfully!' });
                 setFormData({
-                    id: '',
+                    id: formData.id,
                     year: new Date().getFullYear().toString(),
                     leave_type: 'Earned',
                     remaining_days: '',
@@ -109,11 +110,12 @@ export default function LeaveBalancePage() {
     };
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading employees..." />;
     }
 
     return (
         <DashboardLayout>
+            {submitting && <LoadingSpinner fullScreen message="Updating leave balance..." />}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h1>Manage Leave Balance</h1>

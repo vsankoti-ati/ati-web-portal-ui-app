@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './timesheets.module.css';
 
 interface Timesheet {
@@ -46,7 +47,7 @@ export default function TimesheetsPage() {
     }, [router]);
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading timesheets..." />;
     }
 
     return (
@@ -59,38 +60,52 @@ export default function TimesheetsPage() {
                     </button>
                 </div>
 
-                <div className={styles.grid}>
-                    {timesheets?.map((ts) => (
-                        <div
-                            key={ts.id}
-                            className={styles.card}
-                            onClick={() => router.push(`/timesheets/${ts.id}`)}
-                        >
-                            <div className={styles.cardHeader}>
-                                <h3>Week of {new Date(ts.week_start_date).toLocaleDateString()}</h3>
-                                <span className={`${styles.status} ${styles[ts.status]}`}>
-                                    {ts.status}
-                                </span>
-                            </div>
-                            <div className={styles.cardBody}>
-                                {ts.submitter && (
-                                    <p><strong>Submitter:</strong> {ts.submitter}</p>
-                                )}
-                                <p><strong>Period:</strong> {new Date(ts.week_start_date).toLocaleDateString()} - {new Date(ts.week_end_date).toLocaleDateString()}</p>
-                                {ts.submission_date && (
-                                    <p><strong>Submitted:</strong> {new Date(ts.submission_date).toLocaleDateString()}</p>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {timesheets.length === 0 && (
+                {timesheets.length === 0 ? (
                     <div className={styles.empty}>
                         <p>No timesheets found</p>
                         <button className={styles.emptyBtn} onClick={() => router.push('/timesheets/new')}>
                             Create Your First Timesheet
                         </button>
+                    </div>
+                ) : (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.timesheetTable}>
+                            <thead>
+                                <tr>
+                                    <th>Week Period</th>
+                                    <th>Submitter</th>
+                                    <th>Status</th>
+                                    <th>Submission Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {timesheets.map((ts) => (
+                                    <tr key={ts.id}>
+                                        <td className={styles.periodCell}>
+                                            {new Date(ts.week_start_date).toLocaleDateString()} - {new Date(ts.week_end_date).toLocaleDateString()}
+                                        </td>
+                                        <td>{ts.submitter || 'N/A'}</td>
+                                        <td>
+                                            <span className={`${styles.statusBadge} ${styles[ts.status]}`}>
+                                                {ts.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {ts.submission_date ? new Date(ts.submission_date).toLocaleDateString() : 'Not submitted'}
+                                        </td>
+                                        <td>
+                                            <button
+                                                className={styles.viewBtn}
+                                                onClick={() => router.push(`/timesheets/${ts.id}`)}
+                                            >
+                                                View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>

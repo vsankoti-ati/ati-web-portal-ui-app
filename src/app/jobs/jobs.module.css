@@ -16,114 +16,111 @@
     font-size: 2rem;
 }
 
-.myReferralsBtn {
-    padding: 0.8rem 1.5rem;
-    background: white;
-    color: #667eea;
-    border: 2px solid #667eea;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-.myReferralsBtn:hover {
-    background: #667eea;
-    color: white;
-}
-
-.jobGrid {
-    display: grid;
-    gap: 1.5rem;
-}
-
-.jobCard {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s;
-}
-
-.jobCard:hover {
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
-}
-
-.jobHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-}
-
-.jobHeader h2 {
-    margin: 0;
-    color: #2c3e50;
-    font-size: 1.5rem;
-}
-
-.role {
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.description {
-    color: #555;
-    line-height: 1.6;
-    margin: 1rem 0;
-}
-
-.requirements {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 8px;
-    margin: 1rem 0;
-}
-
-.requirements h4 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-    font-size: 0.95rem;
-}
-
-.requirements p {
-    margin: 0;
-    color: #666;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-.footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 2px solid #f0f0f0;
-}
-
-.date {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-}
-
 .referBtn {
-    padding: 0.7rem 1.5rem;
-    background: #667eea;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.3s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .referBtn:hover {
-    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.tableWrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.jobTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.jobTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.jobTable th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.jobTable tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
+
+.jobTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.jobTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.jobTable td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #2c3e50;
+}
+
+.jobTitle {
+    font-weight: 600;
+    color: #667eea;
+}
+
+.departmentBadge {
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.typeBadge {
+    padding: 0.4rem 0.8rem;
+    background: #e3f2fd;
+    color: #1565c0;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.viewBtn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.viewBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
 }
 
 .empty {

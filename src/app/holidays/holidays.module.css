@@ -72,75 +72,82 @@
     color: white;
 }
 
-.calendar {
-    display: grid;
-    gap: 2rem;
-}
-
-.monthSection h2 {
-    margin: 0 0 1rem 0;
-    color: #2c3e50;
-    font-size: 1.5rem;
-}
-
-.holidayList {
-    display: grid;
-    gap: 1rem;
-}
-
-.holidayCard {
+.tableWrapper {
     background: white;
-    padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.holidayTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.holidayTable thead {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.holidayTable th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.holidayTable tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
+
+.holidayTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.holidayTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.holidayTable td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #2c3e50;
+}
+
+.dateCell {
     display: flex;
-    gap: 1.5rem;
     align-items: center;
-    transition: all 0.3s;
-}
-
-.holidayCard:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-}
-
-.dateBox {
+    gap: 0.75rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 1rem;
-    border-radius: 12px;
-    text-align: center;
-    min-width: 80px;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    width: fit-content;
 }
 
-.day {
-    display: block;
-    font-size: 2rem;
+.dateNumber {
+    font-size: 1.5rem;
     font-weight: bold;
     line-height: 1;
 }
 
-.weekday {
-    display: block;
-    font-size: 0.9rem;
+.monthName {
+    font-size: 0.85rem;
     opacity: 0.9;
-    margin-top: 0.25rem;
 }
 
-.holidayInfo {
-    flex: 1;
+.weekdayCell {
+    font-weight: 600;
+    color: #667eea;
 }
 
-.holidayInfo h3 {
-    margin: 0 0 0.25rem 0;
+.occasionCell {
+    font-weight: 600;
     color: #2c3e50;
-    font-size: 1.1rem;
-}
-
-.holidayInfo p {
-    margin: 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
 }
 
 .empty {

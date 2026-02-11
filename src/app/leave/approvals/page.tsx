@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './leave-approvals.module.css';
 
 interface LeaveApplication {
@@ -14,14 +15,20 @@ interface LeaveApplication {
     status: string;
     reason: string;
     applied_date: string;
+    user: any;
 }
 
 export default function LeaveApprovalsPage() {
     const router = useRouter();
     const [applications, setApplications] = useState<LeaveApplication[]>([]);
     const [loading, setLoading] = useState(true);
+    const [processingId, setProcessingId] = useState<string | null>(null);
     const [userRole, setUserRole] = useState('');
+    const [user, setUser] = useState({});
     const [filter, setFilter] = useState('pending');
+    const [commentingId, setCommentingId] = useState<string | null>(null);
+    const [commentAction, setCommentAction] = useState<'approve' | 'reject' | null>(null);
+    const [comments, setComments] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -37,6 +44,7 @@ export default function LeaveApprovalsPage() {
             .then((res) => res.json())
             .then((data) => {
                 setUserRole(data.role);
+                setUser(data);
                 if (data.role !== 'Admin' && data.role !== 'HR') {
                     router.push('/leave');
                     return;
@@ -54,38 +62,74 @@ export default function LeaveApprovalsPage() {
             .finally(() => setLoading(false));
     }, [router]);
 
-    const handleApprove = async (id: string) => {
+    const handleApprove = async (id: string, comment: string) => {
+        setProcessingId(id);
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/${id}/approve`, {
                 method: 'PATCH',
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ comments: comment }),
             });
 
             if (res.ok) {
                 const updated = await res.json();
                 setApplications(applications.map((app) => (app.id === id ? updated : app)));
+                setCommentingId(null);
+                setCommentAction(null);
+                setComments('');
             }
         } catch (error) {
             console.error('Error approving leave:', error);
+        } finally {
+            setProcessingId(null);
         }
     };
 
-    const handleReject = async (id: string) => {
+    const handleReject = async (id: string, comment: string) => {
+        setProcessingId(id);
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/${id}/reject`, {
                 method: 'PATCH',
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ comments: comment }),
             });
 
             if (res.ok) {
                 const updated = await res.json();
                 setApplications(applications.map((app) => (app.id === id ? updated : app)));
+                setCommentingId(null);
+                setCommentAction(null);
+                setComments('');
             }
         } catch (error) {
             console.error('Error rejecting leave:', error);
+        } finally {
+            setProcessingId(null);
         }
+    };
+
+    const handleSubmitComment = () => {
+        if (!commentingId || !commentAction) return;
+        
+        if (commentAction === 'approve') {
+            handleApprove(commentingId, comments);
+        } else {
+            handleReject(commentingId, comments);
+        }
+    };
+
+    const handleCancelComment = () => {
+        setCommentingId(null);
+        setCommentAction(null);
+        setComments('');
     };
 
     const filteredApplications = applications.filter((app) => {
@@ -94,7 +138,7 @@ export default function LeaveApprovalsPage() {
     });
 
     if (loading) {
-        return <div className={styles.loading}>Loading...</div>;
+        return <LoadingSpinner fullScreen message="Loading leave applications..." />;
     }
 
     if (userRole !== 'Admin' && userRole !== 'HR') {
@@ -103,6 +147,46 @@ export default function LeaveApprovalsPage() {
 
     return (
         <DashboardLayout>
+            {processingId && <LoadingSpinner fullScreen message="Processing request..." />}
+            
+            {/* Comment Modal */}
+            {commentingId && (
+                <div className={styles.modalOverlay} onClick={handleCancelComment}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h2>{commentAction === 'approve' ? 'Approve Leave Application' : 'Reject Leave Application'}</h2>
+                            <button className={styles.closeBtn} onClick={handleCancelComment}>×</button>
+                        </div>
+                        <div className={styles.modalBody}>
+                            <label htmlFor="comment-input">Comments (Optional)</label>
+                            <textarea
+                                id="comment-input"
+                                value={comments}
+                                onChange={(e) => setComments(e.target.value)}
+                                placeholder={`Add comments for ${commentAction === 'approve' ? 'approval' : 'rejection'}...`}
+                                rows={5}
+                                className={styles.modalTextarea}
+                                autoFocus
+                            />
+                        </div>
+                        <div className={styles.modalFooter}>
+                            <button
+                                className={styles.modalCancelBtn}
+                                onClick={handleCancelComment}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className={commentAction === 'approve' ? styles.modalApproveBtn : styles.modalRejectBtn}
+                                onClick={handleSubmitComment}
+                            >
+                                {commentAction === 'approve' ? '✓ Confirm Approval' : '✕ Confirm Rejection'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h1>Leave Approvals</h1>
@@ -134,67 +218,75 @@ export default function LeaveApprovalsPage() {
                     </div>
                 </div>
 
-                <div className={styles.applicationsGrid}>
-                    {filteredApplications.map((app) => (
-                        <div key={app.id} className={styles.applicationCard}>
-                            <div className={styles.cardHeader}>
-                                <div>
-                                    <h3>Employee ID: {app.employee_id}</h3>
-                                    <p className={styles.leaveType}>{app.leave_type} Leave</p>
-                                </div>
-                                <span className={`${styles.status} ${styles[app.status]}`}>
-                                    {app.status}
-                                </span>
-                            </div>
-
-                            <div className={styles.cardBody}>
-                                <div className={styles.dateRange}>
-                                    <div>
-                                        <label>From</label>
-                                        <p>{new Date(app.start_date).toLocaleDateString()}</p>
-                                    </div>
-                                    <div>
-                                        <label>To</label>
-                                        <p>{new Date(app.end_date).toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-
-                                {app.reason && (
-                                    <div className={styles.reason}>
-                                        <label>reason</label>
-                                        <p>{app.reason}</p>
-                                    </div>
-                                )}
-
-                                <div className={styles.appliedDate}>
-                                    <label>Applied On</label>
-                                    <p>{new Date(app.applied_date).toLocaleDateString()}</p>
-                                </div>
-                            </div>
-
-                            {app.status === 'pending' && (
-                                <div className={styles.actions}>
-                                    <button
-                                        className={styles.approveBtn}
-                                        onClick={() => handleApprove(app.id)}
-                                    >
-                                        ✓ Approve
-                                    </button>
-                                    <button
-                                        className={styles.rejectBtn}
-                                        onClick={() => handleReject(app.id)}
-                                    >
-                                        ✕ Reject
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-
-                {filteredApplications.length === 0 && (
+                {filteredApplications.length === 0 ? (
                     <div className={styles.empty}>
                         No {filter !== 'all' ? filter : ''} leave applications found
+                    </div>
+                ) : (
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.applicationsTable}>
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Leave Type</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Reason</th>
+                                    <th>Applied On</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredApplications.map((app) => (
+                                    <tr key={app.id}>
+                                        <td className={styles.employeeName}>
+                                            {app.user?.first_name} {app.user?.last_name}
+                                        </td>
+                                        <td>{app.leave_type}</td>
+                                        <td>{new Date(app.start_date).toLocaleDateString()}</td>
+                                        <td>{new Date(app.end_date).toLocaleDateString()}</td>
+                                        <td className={styles.reasonCell}>
+                                            {app.reason || '-'}
+                                        </td>
+                                        <td>{new Date(app.applied_date).toLocaleDateString()}</td>
+                                        <td>
+                                            <span className={`${styles.statusBadge} ${styles[app.status]}`}>
+                                                {app.status}
+                                            </span>
+                                        </td>
+                                        <td className={styles.actionsCell}>
+                                            {app.status === 'pending' ? (
+                                                <div className={styles.actionButtons}>
+                                                    <button
+                                                        className={styles.tableApproveBtn}
+                                                        onClick={() => {
+                                                            setCommentingId(app.id);
+                                                            setCommentAction('approve');
+                                                        }}
+                                                        title="Approve"
+                                                    >
+                                                        ✓ Approve
+                                                    </button>
+                                                    <button
+                                                        className={styles.tableRejectBtn}
+                                                        onClick={() => {
+                                                            setCommentingId(app.id);
+                                                            setCommentAction('reject');
+                                                        }}
+                                                        title="Reject"
+                                                    >
+                                                        ✕ Reject
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className={styles.noActions}>-</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>

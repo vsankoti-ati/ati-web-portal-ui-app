@@ -50,28 +50,56 @@
     border-color: #667eea;
 }
 
-.employeeGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-}
-
-.employeeCard {
+.tableWrapper {
     background: white;
-    padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    position: relative;
+    overflow: hidden;
 }
 
-.employeeCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+.employeeTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.employeeTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.employeeTable th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.employeeTable tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
+
+.employeeTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.employeeTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.employeeTable td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #2c3e50;
+}
+
+.nameCell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .avatar {
@@ -92,44 +120,46 @@
     flex: 1;
 }
 
-.info h3 {
-    margin: 0 0 0.5rem 0;
+.employeeName {
+    font-weight: 600;
     color: #2c3e50;
-    font-size: 1.1rem;
 }
 
-.role {
-    margin: 0.25rem 0;
-    color: #667eea;
+.statusBadge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: 600;
-    font-size: 0.9rem;
+    white-space: nowrap;
+    display: inline-block;
 }
 
-.email,
-.phone {
-    margin: 0.25rem 0;
-    color: #7f8c8d;
-    font-size: 0.85rem;
-}
-
-.status {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.status.active {
+.statusBadge.active {
     background: #d4edda;
     color: #155724;
 }
 
-.status.inactive {
+.statusBadge.inactive {
     background: #f8d7da;
     color: #721c24;
+}
+
+.viewBtn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.viewBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
 }
 
 .empty {
