@@ -20,6 +20,8 @@ export default function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -55,6 +57,12 @@ export default function ProjectsPage() {
             })
             .finally(() => setLoading(false));
     }, [router]);
+
+    // Pagination calculations
+    const totalPages = Math.ceil(projects.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedProjects = projects.slice(startIndex, endIndex);
 
     if (loading) {
         return <LoadingSpinner fullScreen message="Loading projects..." />;
@@ -97,7 +105,7 @@ export default function ProjectsPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {projects.map((project) => (
+                                {paginatedProjects.map((project) => (
                                     <tr key={project.id}>
                                         <td className={styles.projectName}>{project.name}</td>
                                         <td className={styles.descriptionCell}>{project.description}</td>
@@ -122,6 +130,27 @@ export default function ProjectsPage() {
                                 ))}
                             </tbody>
                         </table>
+                        {totalPages > 1 && (
+                            <div className={styles.pagination}>
+                                <div className={styles.paginationButtons}>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                <div className={styles.paginationInfo}>
+                                    Page {currentPage} of {totalPages}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

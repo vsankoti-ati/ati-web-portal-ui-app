@@ -21,6 +21,8 @@ export default function HolidaysPage() {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [selectedClient, setSelectedClient] = useState<string>('');
     const [userRole, setUserRole] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -63,6 +65,17 @@ export default function HolidaysPage() {
     const filteredHolidays = selectedClient
         ? holidays.filter((h) => h.client === selectedClient)
         : [];
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredHolidays.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedHolidays = filteredHolidays.slice(startIndex, endIndex);
+
+    // Reset to page 1 when year or client changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedYear, selectedClient]);
 
     const groupedHolidays = filteredHolidays.reduce((acc, holiday) => {
         const month = new Date(holiday.date).toLocaleString('default', { month: 'long' });
@@ -131,7 +144,7 @@ export default function HolidaysPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredHolidays.map((holiday) => (
+                                {paginatedHolidays.map((holiday) => (
                                     <tr key={holiday.id}>
                                         <td>
                                             <div className={styles.dateCell}>
@@ -152,6 +165,27 @@ export default function HolidaysPage() {
                                 ))}
                             </tbody>
                         </table>
+                        {totalPages > 1 && (
+                            <div className={styles.pagination}>
+                                <div className={styles.paginationButtons}>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                <div className={styles.paginationInfo}>
+                                    Page {currentPage} of {totalPages}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

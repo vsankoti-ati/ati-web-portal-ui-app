@@ -21,6 +21,8 @@ export default function DocumentsPage() {
     const [documents, setDocuments] = useState<Document[]>([]);
     const [loading, setLoading] = useState(true);
     const [filterType, setFilterType] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -51,6 +53,17 @@ export default function DocumentsPage() {
             })
             .finally(() => setLoading(false));
     }, [router, filterType]);
+
+    // Pagination calculations
+    const totalPages = Math.ceil(documents.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedDocuments = documents.slice(startIndex, endIndex);
+
+    // Reset to page 1 when filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterType]);
 
     const formatFileSize = (bytes: number) => {
         if (bytes < 1024) return bytes + ' B';
@@ -121,7 +134,7 @@ export default function DocumentsPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {documents.map((doc) => (
+                                {paginatedDocuments.map((doc) => (
                                     <tr key={doc.id}>
                                         <td className={styles.iconCell}>{getIcon(doc.type)}</td>
                                         <td className={styles.docName}>{doc.name}</td>
@@ -140,6 +153,27 @@ export default function DocumentsPage() {
                                 ))}
                             </tbody>
                         </table>
+                        {totalPages > 1 && (
+                            <div className={styles.pagination}>
+                                <div className={styles.paginationButtons}>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                <div className={styles.paginationInfo}>
+                                    Page {currentPage} of {totalPages}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

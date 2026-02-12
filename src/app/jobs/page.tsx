@@ -20,6 +20,8 @@ export default function JobsPage() {
     const router = useRouter();
     const [jobs, setJobs] = useState<JobOpening[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -45,6 +47,12 @@ export default function JobsPage() {
             })
             .finally(() => setLoading(false));
     }, [router]);
+
+    // Pagination calculations
+    const totalPages = Math.ceil(jobs.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedJobs = jobs.slice(startIndex, endIndex);
 
     if (loading) {
         return (
@@ -82,7 +90,7 @@ export default function JobsPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {jobs.map((job) => (
+                                {paginatedJobs.map((job) => (
                                     <tr key={job.id}>
                                         <td className={styles.jobTitle}>{job.title}</td>
                                         <td>
@@ -106,6 +114,27 @@ export default function JobsPage() {
                                 ))}
                             </tbody>
                         </table>
+                        {totalPages > 1 && (
+                            <div className={styles.pagination}>
+                                <div className={styles.paginationButtons}>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                <div className={styles.paginationInfo}>
+                                    Page {currentPage} of {totalPages}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

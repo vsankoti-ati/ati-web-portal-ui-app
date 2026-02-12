@@ -161,3 +161,101 @@
     font-size: 1.5rem;
     color: #667eea;
 }
+
+/* Pagination Styles */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    background: #f8f9fa;
+}
+
+.paginationButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.paginationButtons button {
+    padding: 0.6rem 1.2rem;
+    background: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.paginationButtons button:hover:not(:disabled) {
+    background: #004085;
+    transform: translateY(-1px);
+}
+
+.paginationButtons button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.paginationInfo {
+    color: #343a40;
+    font-weight: 500;
+}
+
+/* Section Styles */
+.section {
+    margin-bottom: 3rem;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.sectionHeader h1,
+.sectionHeader h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.sectionHeader h1 {
+    font-size: 2rem;
+}
+
+.sectionHeader h2 {
+    font-size: 1.75rem;
+}
+
+/* Filter Buttons */
+.filterButtons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.filterBtn {
+    padding: 0.7rem 1.5rem;
+    background: white;
+    color: #0056b3;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.filterBtn:hover {
+    border-color: #0056b3;
+    background: #f0f7ff;
+}
+
+.filterBtn.active {
+    background: #0056b3;
+    color: white;
+    border-color: #0056b3;
+}
+

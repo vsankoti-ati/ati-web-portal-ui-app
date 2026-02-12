@@ -40,6 +40,9 @@ export default function TimesheetDetailPage() {
     const [loading, setLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
     const [userRole, setUserRole] = useState('');
+    const [showCommentModal, setShowCommentModal] = useState(false);
+    const [commentModalAction, setCommentModalAction] = useState<'approve' | 'reject'>('approve');
+    const [approverComment, setApproverComment] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -109,13 +112,28 @@ export default function TimesheetDetailPage() {
         }
     };
 
-    const handleApprove = async () => {
+    const openCommentModal = (action: 'approve' | 'reject') => {
+        setCommentModalAction(action);
+        setApproverComment('');
+        setShowCommentModal(true);
+    };
+
+    const closeCommentModal = () => {
+        setShowCommentModal(false);
+        setApproverComment('');
+    };
+
+    const handleApprove = async (comment?: string) => {
         setIsProcessing(true);
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${params.id}/approve`, {
                 method: 'PATCH',
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ approver_comments: comment || '' })
             });
 
             if (res.ok) {
@@ -128,6 +146,7 @@ export default function TimesheetDetailPage() {
                     }));
                 }
                 setTimesheet(updated);
+                closeCommentModal();
             }
         } catch (error) {
             console.error('Error approving timesheet:', error);
@@ -136,13 +155,22 @@ export default function TimesheetDetailPage() {
         }
     };
 
-    const handleReject = async () => {
+    const handleReject = async (comment: string) => {
+        if (!comment.trim()) {
+            alert('Comment is required when rejecting a timesheet.');
+            return;
+        }
+
         setIsProcessing(true);
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${params.id}/reject`, {
                 method: 'PATCH',
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ approver_comments: comment })
             });
 
             if (res.ok) {
@@ -155,11 +183,20 @@ export default function TimesheetDetailPage() {
                     }));
                 }
                 setTimesheet(updated);
+                closeCommentModal();
             }
         } catch (error) {
             console.error('Error rejecting timesheet:', error);
         } finally {
             setIsProcessing(false);
+        }
+    };
+
+    const handleConfirmAction = () => {
+        if (commentModalAction === 'approve') {
+            handleApprove(approverComment);
+        } else {
+            handleReject(approverComment);
         }
     };
 
@@ -279,10 +316,10 @@ export default function TimesheetDetailPage() {
                         )}
                         {timesheet.status === 'submitted' && userRole === 'Admin' && (
                             <>
-                                <button className={styles.rejectBtn} onClick={handleReject} disabled={isProcessing}>
+                                <button className={styles.rejectBtn} onClick={() => openCommentModal('reject')} disabled={isProcessing}>
                                     {isProcessing ? 'Rejecting...' : 'Reject Timesheet'}
                                 </button>
-                                <button className={styles.approveBtn} onClick={handleApprove} disabled={isProcessing}>
+                                <button className={styles.approveBtn} onClick={() => openCommentModal('approve')} disabled={isProcessing}>
                                     {isProcessing ? 'Approving...' : 'Approve Timesheet'}
                                 </button>
                             </>
@@ -352,6 +389,49 @@ export default function TimesheetDetailPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Comment Modal */}
+                {showCommentModal && (
+                    <div className={styles.modalOverlay} onClick={closeCommentModal}>
+                        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                            <div className={styles.modalHeader}>
+                                <h2>{commentModalAction === 'approve' ? 'Approve Timesheet' : 'Reject Timesheet'}</h2>
+                                <button className={styles.closeBtn} onClick={closeCommentModal}>
+                                    ×
+                                </button>
+                            </div>
+                            <div className={styles.modalBody}>
+                                <label>
+                                    Comment {commentModalAction === 'reject' && <span className={styles.requiredAsterisk}>*</span>}
+                                </label>
+                                <textarea
+                                    className={styles.modalTextarea}
+                                    value={approverComment}
+                                    onChange={(e) => setApproverComment(e.target.value)}
+                                    placeholder={commentModalAction === 'approve' ? 'Add an optional comment...' : 'Please provide a reason for rejection...'}
+                                    rows={5}
+                                />
+                                {commentModalAction === 'reject' && (
+                                    <p className={styles.helpText}>
+                                        Comment is required when rejecting a timesheet.
+                                    </p>
+                                )}
+                            </div>
+                            <div className={styles.modalFooter}>
+                                <button className={styles.modalCancelBtn} onClick={closeCommentModal}>
+                                    Cancel
+                                </button>
+                                <button 
+                                    className={commentModalAction === 'approve' ? styles.modalApproveBtn : styles.modalRejectBtn}
+                                    onClick={handleConfirmAction}
+                                    disabled={commentModalAction === 'reject' && !approverComment.trim()}
+                                >
+                                    {commentModalAction === 'approve' ? 'Approve' : 'Reject'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </DashboardLayout>
     );

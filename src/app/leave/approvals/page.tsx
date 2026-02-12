@@ -29,6 +29,8 @@ export default function LeaveApprovalsPage() {
     const [commentingId, setCommentingId] = useState<string | null>(null);
     const [commentAction, setCommentAction] = useState<'approve' | 'reject' | null>(null);
     const [comments, setComments] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -164,6 +166,17 @@ export default function LeaveApprovalsPage() {
         return appStatus === filterStatus;
     });
 
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredApplications.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
+
+    // Reset to page 1 when filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter]);
+
     // Debug: Log all application statuses
     useEffect(() => {
         if (applications.length > 0) {
@@ -277,7 +290,7 @@ export default function LeaveApprovalsPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredApplications.map((app) => (
+                                {paginatedApplications.map((app) => (
                                     <tr key={app.id}>
                                         <td className={styles.employeeName}>
                                             {app.user?.first_name} {app.user?.last_name}
@@ -326,6 +339,30 @@ export default function LeaveApprovalsPage() {
                                 ))}
                             </tbody>
                         </table>
+                        {totalPages > 1 && (
+                            <div className={styles.pagination}>
+                                <button
+                                    className={styles.pageBtn}
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    ← Previous
+                                </button>
+                                <div className={styles.pageInfo}>
+                                    Page {currentPage} of {totalPages}
+                                    <span className={styles.pageCount}>
+                                        ({filteredApplications.length} total)
+                                    </span>
+                                </div>
+                                <button
+                                    className={styles.pageBtn}
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    Next →
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

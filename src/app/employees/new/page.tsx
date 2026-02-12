@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { EmployeeLocation } from '../employee-location.enum';
 import styles from './new-employee.module.css';
 
 export default function NewEmployeePage() {
@@ -18,6 +19,7 @@ export default function NewEmployeePage() {
         date_of_birth: '',
         date_of_joining: '',
         is_active: true,
+        geo_location: '',
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -135,6 +137,20 @@ export default function NewEmployeePage() {
                                     onChange={(e) => setFormData({ ...formData, date_of_joining: e.target.value })}
                                     required
                                 />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Location *</label>
+                                <select
+                                    className={styles.selectInput}
+                                    title="Employee Location"
+                                    value={formData.geo_location}
+                                    onChange={(e) => setFormData({ ...formData, geo_location: e.target.value })}
+                                    required
+                                >
+                                    <option value="">Select Location</option>
+                                    <option value={EmployeeLocation.INDIA}>{EmployeeLocation.INDIA}</option>
+                                    <option value={EmployeeLocation.USA}>{EmployeeLocation.USA}</option>
+                                </select>
                             </div>
                             <div className={styles.formGroup}>
                                 <label className={styles.checkboxLabel}>

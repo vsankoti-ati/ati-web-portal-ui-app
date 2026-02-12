@@ -14,6 +14,8 @@ interface Employee {
     email_id: string;
     phone_number: string;
     is_active: boolean;
+    geo_location: string;
+    admin_comments: string;
 }
 
 export default function EmployeesPage() {
@@ -23,6 +25,8 @@ export default function EmployeesPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [userRole, setUserRole] = useState('');
     const [accessDenied, setAccessDenied] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 5;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -63,6 +67,17 @@ export default function EmployeesPage() {
             .toLowerCase()
             .includes(searchTerm.toLowerCase())
     );
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredEmployees.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedEmployees = filteredEmployees.slice(startIndex, endIndex);
+
+    // Reset to page 1 when search term changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     if (loading) {
         return <LoadingSpinner fullScreen message="Loading employees..." />;
@@ -119,7 +134,7 @@ export default function EmployeesPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredEmployees.map((emp) => (
+                                {paginatedEmployees.map((emp) => (
                                     <tr key={emp.id}>
                                         <td>
                                             <div className={styles.nameCell}>
@@ -151,6 +166,27 @@ export default function EmployeesPage() {
                                 ))}
                             </tbody>
                         </table>
+                        {totalPages > 1 && (
+                            <div className={styles.pagination}>
+                                <div className={styles.paginationButtons}>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                        disabled={currentPage === 1}
+                                    >
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                <div className={styles.paginationInfo}>
+                                    Page {currentPage} of {totalPages}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
