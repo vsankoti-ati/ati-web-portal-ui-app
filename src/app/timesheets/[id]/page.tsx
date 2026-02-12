@@ -12,14 +12,18 @@ interface Timesheet {
     week_start_date: string;
     week_end_date: string;
     status: string;
+    submission_date: Date;
+    approval_date: Date;
+    approved_by: string;
     entries: TimeEntry[];
 }
 
 interface TimeEntry {
     id: string;
+    timesheet_id: string;
     project_id: string;
     project: Project;
-    entry_date: string;
+    entry_date: Date;
     hours: number;
     description: string;
 }
@@ -57,7 +61,23 @@ export default function TimesheetDetailPage() {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
-            .then((data) => setTimesheet(data))
+            .then((data) => {
+                console.log('Raw API response:', data);
+                // Ensure entry_date values are converted to Date objects
+                if (data.entries) {
+                    console.log('Converting entry dates to Date objects...');
+                    data.entries = data.entries.map((entry: any) => {
+                        const convertedEntry = {
+                            ...entry,
+                            entry_date: new Date(entry.entry_date)
+                        };
+                        console.log(`Entry ${entry.id}: ${entry.entry_date} -> ${convertedEntry.entry_date}`);
+                        return convertedEntry;
+                    });
+                }
+                console.log('Final processed timesheet data:', data);
+                setTimesheet(data);
+            })
             .catch(console.error)
             .finally(() => setLoading(false));
     }, [router, params.id]);
@@ -73,6 +93,13 @@ export default function TimesheetDetailPage() {
 
             if (res.ok) {
                 const updated = await res.json();
+                // Ensure entry_date values are converted to Date objects
+                if (updated.entries) {
+                    updated.entries = updated.entries.map((entry: any) => ({
+                        ...entry,
+                        entry_date: new Date(entry.entry_date)
+                    }));
+                }
                 setTimesheet(updated);
             }
         } catch (error) {
@@ -93,10 +120,44 @@ export default function TimesheetDetailPage() {
 
             if (res.ok) {
                 const updated = await res.json();
+                // Ensure entry_date values are converted to Date objects
+                if (updated.entries) {
+                    updated.entries = updated.entries.map((entry: any) => ({
+                        ...entry,
+                        entry_date: new Date(entry.entry_date)
+                    }));
+                }
                 setTimesheet(updated);
             }
         } catch (error) {
             console.error('Error approving timesheet:', error);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handleReject = async () => {
+        setIsProcessing(true);
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${params.id}/reject`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (res.ok) {
+                const updated = await res.json();
+                // Ensure entry_date values are converted to Date objects
+                if (updated.entries) {
+                    updated.entries = updated.entries.map((entry: any) => ({
+                        ...entry,
+                        entry_date: new Date(entry.entry_date)
+                    }));
+                }
+                setTimesheet(updated);
+            }
+        } catch (error) {
+            console.error('Error rejecting timesheet:', error);
         } finally {
             setIsProcessing(false);
         }
@@ -125,11 +186,61 @@ export default function TimesheetDetailPage() {
         return days;
     };
 
-    const getEntriesForDate = (date: Date) => {
-        if (!timesheet || !timesheet.entries) return [];
+    const formatDateToMMDD = (date: Date): string => {
+        if (!date) {
+            console.log('formatDateToMMDD received null/undefined date');
+            return '';
+        }
         
-        const dateStr = date.toISOString().split('T')[0];
-        return timesheet.entries.filter(entry => entry.entry_date === dateStr);
+        // Ensure we have a valid Date object
+        if (!(date instanceof Date) || isNaN(date.getTime())) {
+            console.log('formatDateToMMDD received invalid date:', date);
+            return '';
+        }
+        
+        // getMonth() returns 0-indexed values, so add 1
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const result = `${month}/${day}`;
+        
+        console.log(`formatDateToMMDD: ${date} -> ${result}`);
+        return result;
+    }
+
+    const getEntriesForDate = (date: Date) => {
+        if (!timesheet || !timesheet.entries) {
+            console.log('No timesheet or entries available');
+            return [];
+        }
+        
+        console.log(`Looking for entries for UI date: ${date} (Month: ${date.getMonth()}, Day: ${date.getDate()})`);
+        
+        // Debug: log all entry dates
+        console.log('All entries with dates:', timesheet.entries.map(entry => ({
+            id: entry.id,
+            entry_date: entry.entry_date,
+            month: entry.entry_date ? entry.entry_date.getMonth() : 'null',
+            day: entry.entry_date ? entry.entry_date.getDate() : 'null',
+            hours: entry.hours
+        })));
+        
+        const matchingEntries = timesheet.entries.filter(entry => {
+            if (!entry.entry_date) {
+                console.log(`Entry ${entry.id} has no entry_date`);
+                return false;
+            }
+            
+            // Compare dates using getMonth() and getDate()
+            const matches = entry.entry_date.getMonth() === date.getMonth() && 
+                           entry.entry_date.getDate() === date.getDate();
+            
+            console.log(`Entry ${entry.id}: Month ${entry.entry_date.getMonth()} vs ${date.getMonth()}, Day ${entry.entry_date.getDate()} vs ${date.getDate()} - Matches: ${matches}`);
+            
+            return matches;
+        });
+        
+        console.log(`Found ${matchingEntries.length} entries for date ${date}`);
+        return matchingEntries;
     };
 
     const getTotalHoursForDate = (date: Date) => {
@@ -151,7 +262,6 @@ export default function TimesheetDetailPage() {
     }
 
     const weekDays = getWeekDays();
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     return (
         <DashboardLayout>
@@ -168,9 +278,14 @@ export default function TimesheetDetailPage() {
                             </button>
                         )}
                         {timesheet.status === 'submitted' && userRole === 'Admin' && (
-                            <button className={styles.approveBtn} onClick={handleApprove} disabled={isProcessing}>
-                                {isProcessing ? 'Approving...' : 'Approve Timesheet'}
-                            </button>
+                            <>
+                                <button className={styles.rejectBtn} onClick={handleReject} disabled={isProcessing}>
+                                    {isProcessing ? 'Rejecting...' : 'Reject Timesheet'}
+                                </button>
+                                <button className={styles.approveBtn} onClick={handleApprove} disabled={isProcessing}>
+                                    {isProcessing ? 'Approving...' : 'Approve Timesheet'}
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>
@@ -209,8 +324,7 @@ export default function TimesheetDetailPage() {
                                 return (
                                     <div key={index} className={styles.dayColumn}>
                                         <div className={styles.dayHeader}>
-                                            <div className={styles.dayName}>{dayNames[day.getDay()]}</div>
-                                            <div className={styles.dayDate}>{day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                                            <div className={styles.dayDate}>{formatDateToMMDD(day)}</div>
                                             {dayTotal > 0 && (
                                                 <div className={styles.dayTotal}>{dayTotal} hrs</div>
                                             )}

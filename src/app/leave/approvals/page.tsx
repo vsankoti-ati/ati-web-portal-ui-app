@@ -24,7 +24,7 @@ export default function LeaveApprovalsPage() {
     const [loading, setLoading] = useState(true);
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [userRole, setUserRole] = useState('');
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState<any>(null);
     const [filter, setFilter] = useState('pending');
     const [commentingId, setCommentingId] = useState<string | null>(null);
     const [commentAction, setCommentAction] = useState<'approve' | 'reject' | null>(null);
@@ -57,8 +57,16 @@ export default function LeaveApprovalsPage() {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => res.json())
-            .then((data) => setApplications(data))
-            .catch(console.error)
+            .then((data) => {
+                console.log('Fetched leave applications:', data);
+                if (Array.isArray(data)) {
+                    console.log('Applications statuses:', data.map(app => ({ id: app.id, status: app.status })));
+                }
+                setApplications(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching applications:', error);
+            })
             .finally(() => setLoading(false));
     }, [router]);
 
@@ -72,15 +80,21 @@ export default function LeaveApprovalsPage() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ comments: comment }),
+                body: JSON.stringify({ comments: comment, approved_by: `${user.first_name} ${user.last_name}` }),
             });
 
             if (res.ok) {
                 const updated = await res.json();
+                console.log('Leave approved, updated record:', updated);
+                console.log('Status received from API:', updated.status);
                 setApplications(applications.map((app) => (app.id === id ? updated : app)));
                 setCommentingId(null);
                 setCommentAction(null);
                 setComments('');
+            } else {
+                console.error('Failed to approve leave, status:', res.status);
+                const errorData = await res.text();
+                console.error('Error response:', errorData);
             }
         } catch (error) {
             console.error('Error approving leave:', error);
@@ -99,15 +113,21 @@ export default function LeaveApprovalsPage() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ comments: comment }),
+                body: JSON.stringify({ comments: comment, approved_by: `${user.first_name} ${user.last_name}` }),
             });
 
             if (res.ok) {
                 const updated = await res.json();
+                console.log('Leave rejected, updated record:', updated);
+                console.log('Status received from API:', updated.status);
                 setApplications(applications.map((app) => (app.id === id ? updated : app)));
                 setCommentingId(null);
                 setCommentAction(null);
                 setComments('');
+            } else {
+                console.error('Failed to reject leave, status:', res.status);
+                const errorData = await res.text();
+                console.error('Error response:', errorData);
             }
         } catch (error) {
             console.error('Error rejecting leave:', error);
@@ -134,8 +154,27 @@ export default function LeaveApprovalsPage() {
 
     const filteredApplications = applications.filter((app) => {
         if (filter === 'all') return true;
-        return app.status === filter;
+        
+        // Make filtering case-insensitive
+        const appStatus = app.status?.toLowerCase();
+        const filterStatus = filter.toLowerCase();
+        
+        console.log(`Filtering: app.status="${app.status}" (normalized: "${appStatus}"), filter="${filter}" (normalized: "${filterStatus}")`, app);
+        
+        return appStatus === filterStatus;
     });
+
+    // Debug: Log all application statuses
+    useEffect(() => {
+        if (applications.length > 0) {
+            console.log('All applications with their statuses:', 
+                applications.map(app => ({ id: app.id, status: app.status, employee: `${app.user?.first_name} ${app.user?.last_name}` }))
+            );
+            
+            const uniqueStatuses = Array.from(new Set(applications.map(app => app.status)));
+            console.log('Unique status values found:', uniqueStatuses);
+        }
+    }, [applications]);
 
     if (loading) {
         return <LoadingSpinner fullScreen message="Loading leave applications..." />;
@@ -256,7 +295,7 @@ export default function LeaveApprovalsPage() {
                                             </span>
                                         </td>
                                         <td className={styles.actionsCell}>
-                                            {app.status === 'pending' ? (
+                                            {app.status.toLowerCase() === 'pending' ? (
                                                 <div className={styles.actionButtons}>
                                                     <button
                                                         className={styles.tableApproveBtn}

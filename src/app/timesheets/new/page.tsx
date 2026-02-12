@@ -85,6 +85,27 @@ export default function NewTimesheetPage() {
         setEntries(updated);
     };
 
+    const calculateWeekDates = () => {
+        if (!weekStart) return [];
+        
+        const startDate = new Date(weekStart);
+        const weekDates = [];
+        
+        for (let i = 0; i < 7; i++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(startDate.getDate() + i);
+            weekDates.push(currentDate);
+        }
+        
+        return weekDates;
+    };
+
+    const formatDateToMMDD = (date: Date): string => {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${month}/${day}`;
+    };
+
     const calculateTotal = (entry: TimeEntry) => {
         return entry.sunday + entry.monday + entry.tuesday + entry.wednesday +
             entry.thursday + entry.friday + entry.saturday;
@@ -98,6 +119,8 @@ export default function NewTimesheetPage() {
         e.preventDefault();
         setIsSubmitting(true);
         const token = localStorage.getItem('token');
+
+        const weekDates = calculateWeekDates();
 
         try {
             // Calculate week end date
@@ -186,7 +209,7 @@ export default function NewTimesheetPage() {
 
                 <form onSubmit={handleSubmit}>
                     <div className={styles.weekSelector}>
-                        <label>Week Starting (Sunday):</label>
+                        <label>Week Starting (Monday):</label>
                         <input
                             type="date"
                             value={weekStart}
@@ -200,13 +223,9 @@ export default function NewTimesheetPage() {
                             <thead>
                                 <tr>
                                     <th className={styles.projectCol}>Project</th>
-                                    <th>Sun</th>
-                                    <th>Mon</th>
-                                    <th>Tue</th>
-                                    <th>Wed</th>
-                                    <th>Thu</th>
-                                    <th>Fri</th>
-                                    <th>Sat</th>
+                                    {calculateWeekDates().map((date, index) => (
+                                        <th key={index}>{formatDateToMMDD(date)}</th>
+                                    ))}
                                     <th>Total</th>
                                     <th className={styles.actionCol}>Action</th>
                                 </tr>
