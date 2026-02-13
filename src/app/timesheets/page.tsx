@@ -8,7 +8,7 @@ import styles from './timesheets.module.css';
 
 interface Timesheet {
     id: string;
-    employee_id: string;
+    user_id: string;
     week_start_date: string;
     week_end_date: string;
     status: string;
@@ -29,64 +29,71 @@ export default function TimesheetsPage() {
     const pageSize = 5;
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/login');
-            return;
-        }
+        const fetchData = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                router.push('/login');
+                return;
+            }
 
-        // Get user profile to check role
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setUserRole(data.role);
-                setUserId(data.id);
-            })
-            .catch(console.error);
+            try {
+                // Get user profile to check role
+                const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const profileData = await profileRes.json();
+                console.log('User profile data:', profileData);
+                setUserRole(profileData.role);
+                setUserId(profileData.id);
+                console.log(`userId:${profileData.id}`);
 
-        // Fetch user's own timesheets
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (Array.isArray(data)) {
-                    setMyTimesheets(data);
-                } else {
-                    console.error('Timesheets response is not an array:', data);
+                // Fetch user's own timesheets
+                try {
+                    const timesheetsRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets?userId=${profileData.id}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    const timesheetsData = await timesheetsRes.json();
+                    if (Array.isArray(timesheetsData)) {
+                        setMyTimesheets(timesheetsData);
+                    } else {
+                        console.error('Timesheets response is not an array:', timesheetsData);
+                        setMyTimesheets([]);
+                    }
+                } catch (error) {
+                    console.error('Error fetching timesheets:', error);
                     setMyTimesheets([]);
                 }
-            })
-            .catch((error) => {
-                console.error('Error fetching timesheets:', error);
-                setMyTimesheets([]);
-            });
 
-        // Fetch all timesheets for admin
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (Array.isArray(data)) {
-                    setAllTimesheets(data);
-                } else {
-                    console.error('All timesheets response is not an array:', data);
+                // Fetch all timesheets for admin
+                try {
+                    let nullUserId=null;
+                    const allTimesheetsRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets?userId=`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    const allTimesheetsData = await allTimesheetsRes.json();
+                    if (Array.isArray(allTimesheetsData)) {
+                        setAllTimesheets(allTimesheetsData);
+                    } else {
+                        console.error('All timesheets response is not an array:', allTimesheetsData);
+                        setAllTimesheets([]);
+                    }
+                } catch (error) {
+                    console.error('Error fetching all timesheets:', error);
                     setAllTimesheets([]);
                 }
-            })
-            .catch((error) => {
-                console.error('Error fetching all timesheets:', error);
-                setAllTimesheets([]);
-            })
-            .finally(() => setLoading(false));
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, [router]);
 
     // Filter to show only logged-in user's timesheets in My Timesheets section
     const filteredMyTimesheets = myTimesheets.filter(
-        (ts) => ts.employee_id === userId
+        (ts) => ts.user_id === userId
     );
 
     // Filter admin timesheets by status
