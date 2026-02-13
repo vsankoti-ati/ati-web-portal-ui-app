@@ -20,6 +20,7 @@ interface LeaveApplication {
     status: string;
     reason: string;
     applied_date: string;
+    approver_comments: string;
 }
 
 interface LeavePageProps {
@@ -268,6 +269,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                             <div>To</div>
                             <div>Status</div>
                             <div>Applied</div>
+                            <div>Approver Comments</div>
                         </div>
                         {applications.map((app) => (
                             <div key={app.id} className={styles.tableRow}>
@@ -280,6 +282,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                     </span>
                                 </div>
                                 <div>{new Date(app.applied_date).toLocaleDateString()}</div>
+                                <div>{app.approver_comments || '-'}</div>
                             </div>
                         ))}
                     </div>

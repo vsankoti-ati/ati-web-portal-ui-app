@@ -14,6 +14,7 @@ interface Timesheet {
     status: string;
     submission_date: string | null;
     submitter?: string;
+    approver_comments?: string;
 }
 
 export default function TimesheetsPage() {
@@ -136,6 +137,7 @@ export default function TimesheetsPage() {
                             <th>Submitter</th>
                             <th>Status</th>
                             <th>Submission Date</th>
+                            <th>Approver Comments</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -154,6 +156,7 @@ export default function TimesheetsPage() {
                                 <td>
                                     {ts.submission_date ? new Date(ts.submission_date).toLocaleDateString() : 'Not submitted'}
                                 </td>
+                                <td>{ts.approver_comments || '-'}</td>
                                 <td>
                                     <button
                                         className={styles.viewBtn}

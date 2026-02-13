@@ -201,3 +201,82 @@
 .error {
     color: #e74c3c;
 }
+
+/* Mobile and Tablet Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .backBtn,
+    .referBtn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .referralForm {
+        padding: 1.5rem;
+    }
+
+    .referralForm h2 {
+        font-size: 1.25rem;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .jobHeader {
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+
+    .jobHeader h1 {
+        font-size: 1.5rem;
+    }
+
+    .jobMeta {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .metaItem {
+        width: 100%;
+        text-align: center;
+    }
+
+    .status {
+        align-self: flex-start;
+    }
+
+    .jobContent {
+        padding: 1.5rem;
+    }
+
+    .section h2 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .jobHeader h1 {
+        font-size: 1.25rem;
+    }
+
+    .jobHeader,
+    .jobContent,
+    .referralForm {
+        padding: 1.25rem;
+    }
+
+    .section h2 {
+        font-size: 1.15rem;
+    }
+}

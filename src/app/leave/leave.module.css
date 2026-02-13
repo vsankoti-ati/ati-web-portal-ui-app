@@ -157,13 +157,14 @@
 .table {
     background: white;
     border-radius: 12px;
-    overflow: hidden;
+    overflow-x: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .tableHeader {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1.5fr;
+    min-width: 900px;
     padding: 1rem 1.5rem;
     background: #f8f9fa;
     font-weight: 600;
@@ -173,7 +174,8 @@
 
 .tableRow {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1.5fr;
+    min-width: 900px;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #f0f0f0;
     transition: background 0.2s;

@@ -206,3 +206,80 @@
 .error {
     color: #e74c3c;
 }
+
+/* Mobile and Tablet Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .editBtn,
+    .saveBtn,
+    .cancelBtn {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .projectHeader {
+        padding: 1.5rem;
+    }
+
+    .projectInfo h1 {
+        font-size: 1.5rem;
+    }
+
+    .nameEdit {
+        flex-direction: column;
+    }
+
+    .nameEdit input {
+        font-size: 1.25rem;
+    }
+
+    .details {
+        padding: 1.5rem;
+    }
+
+    .details h2 {
+        font-size: 1.15rem;
+    }
+
+    .detailGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .projectHeader {
+        padding: 1.25rem;
+    }
+
+    .projectInfo h1 {
+        font-size: 1.25rem;
+    }
+
+    .details {
+        padding: 1.25rem;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .editBtn,
+    .saveBtn,
+    .cancelBtn {
+        width: 100%;
+    }
+}

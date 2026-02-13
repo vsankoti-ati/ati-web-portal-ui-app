@@ -116,3 +116,46 @@
 .submitBtn:hover {
     transform: translateY(-2px);
 }
+
+/* Mobile and Tablet Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .backBtn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .formCard {
+        padding: 1.5rem;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancelBtn,
+    .submitBtn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.25rem;
+    }
+
+    .formCard {
+        padding: 1.25rem;
+    }
+}
