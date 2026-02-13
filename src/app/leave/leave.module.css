@@ -154,58 +154,94 @@
     color: #2c3e50;
 }
 
-.table {
+.tableWrapper {
     background: white;
     border-radius: 12px;
-    overflow-x: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;
 }
 
-.tableHeader {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1.5fr;
+.leaveTable {
+    width: 100%;
     min-width: 900px;
-    padding: 1rem 1.5rem;
-    background: #f8f9fa;
+    border-collapse: collapse;
+}
+
+.leaveTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.leaveTable th {
+    padding: 1rem;
+    text-align: left;
     font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.leaveTable tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
+
+.leaveTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.leaveTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.leaveTable td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
     color: #2c3e50;
-    border-bottom: 2px solid #e0e0e0;
 }
 
-.tableRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1.5fr;
-    min-width: 900px;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background 0.2s;
-}
-
-.tableRow:hover {
-    background: #f8f9fa;
-}
-
-.status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
+.statusBadge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: 600;
+    white-space: nowrap;
     display: inline-block;
 }
 
-.status.pending {
+.statusBadge.pending {
     background: #fff3cd;
     color: #856404;
 }
 
-.status.approved {
+.statusBadge.submitted {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.statusBadge.approved {
     background: #d4edda;
     color: #155724;
 }
 
-.status.rejected {
+.statusBadge.rejected {
     background: #f8d7da;
     color: #721c24;
+}
+
+.empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.empty p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin: 0;
 }
 
 .loading {

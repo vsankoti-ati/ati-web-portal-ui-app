@@ -262,30 +262,42 @@ export default function LeavePage({ userId }: LeavePageProps) {
 
                 <div className={styles.applicationsSection}>
                     <h2>Leave Applications</h2>
-                    <div className={styles.table}>
-                        <div className={styles.tableHeader}>
-                            <div>Type</div>
-                            <div>From</div>
-                            <div>To</div>
-                            <div>Status</div>
-                            <div>Applied</div>
-                            <div>Approver Comments</div>
+                    {applications.length > 0 ? (
+                        <div className={styles.tableWrapper}>
+                            <table className={styles.leaveTable}>
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Status</th>
+                                        <th>Applied</th>
+                                        <th>Approver Comments</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {applications.map((app) => (
+                                        <tr key={app.id}>
+                                            <td>{app.leave_type}</td>
+                                            <td>{new Date(app.start_date).toLocaleDateString()}</td>
+                                            <td>{new Date(app.end_date).toLocaleDateString()}</td>
+                                            <td>
+                                                <span className={`${styles.statusBadge} ${styles[app.status.toLowerCase()]}`}>
+                                                    {app.status}
+                                                </span>
+                                            </td>
+                                            <td>{new Date(app.applied_date).toLocaleDateString()}</td>
+                                            <td>{app.approver_comments || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                        {applications.map((app) => (
-                            <div key={app.id} className={styles.tableRow}>
-                                <div>{app.leave_type}</div>
-                                <div>{new Date(app.start_date).toLocaleDateString()}</div>
-                                <div>{new Date(app.end_date).toLocaleDateString()}</div>
-                                <div>
-                                    <span className={`${styles.status} ${styles[app.status]}`}>
-                                        {app.status}
-                                    </span>
-                                </div>
-                                <div>{new Date(app.applied_date).toLocaleDateString()}</div>
-                                <div>{app.approver_comments || '-'}</div>
-                            </div>
-                        ))}
-                    </div>
+                    ) : (
+                        <div className={styles.empty}>
+                            <p>No leave applications found</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </DashboardLayout>
