@@ -56,7 +56,17 @@ export default function LeavePage({ userId }: LeavePageProps) {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    router.push('/login');
+                    throw new Error('Unauthorized');
+                }
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
             .then((data) => {
                     setUserRole(data.role);
                     console.log('User profile data:', data);
@@ -109,8 +119,10 @@ export default function LeavePage({ userId }: LeavePageProps) {
                     }
                 })
                 .catch((err) => {
-                    console.error(err);
-                    setLoading(false);
+                    if (err.message !== 'Unauthorized') {
+                        console.error(err);
+                        setLoading(false);
+                    }
                 });
 
         // Applications will be fetched after we get the profile (so we know employeeId)

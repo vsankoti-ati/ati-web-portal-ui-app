@@ -34,9 +34,23 @@ export default function ProjectsPage() {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    router.push('/login');
+                    throw new Error('Unauthorized');
+                }
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
             .then((data) => setUserRole(data.role))
-            .catch(console.error);
+            .catch((error) => {
+                if (error.message !== 'Unauthorized') {
+                    console.error(error);
+                }
+            });
 
         // Fetch projects
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects`, {

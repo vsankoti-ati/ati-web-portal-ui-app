@@ -42,6 +42,14 @@ export default function TimesheetsPage() {
                 const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
+                if (profileRes.status === 401) {
+                    localStorage.removeItem('token');
+                    router.push('/login');
+                    return;
+                }
+                if (!profileRes.ok) {
+                    throw new Error(`HTTP error! status: ${profileRes.status}`);
+                }
                 const profileData = await profileRes.json();
                 console.log('User profile data:', profileData);
                 setUserRole(profileData.role);

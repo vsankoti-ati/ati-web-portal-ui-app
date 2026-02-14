@@ -39,7 +39,17 @@ export default function EmployeesPage() {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` },
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    router.push('/login');
+                    throw new Error('Unauthorized');
+                }
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
             .then((data) => {
                 setUserRole(data.role);
                 // Only Admin and HR can access this page
@@ -58,7 +68,12 @@ export default function EmployeesPage() {
                     .catch(console.error)
                     .finally(() => setLoading(false));
             })
-            .catch(console.error);
+            .catch((error) => {
+                if (error.message !== 'Unauthorized') {
+                    console.error('Error fetching profile:', error);
+                    setLoading(false);
+                }
+            });
     }, [router]);
 
     const filteredEmployees = employees.filter((emp) =>

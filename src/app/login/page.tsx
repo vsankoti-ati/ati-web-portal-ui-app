@@ -25,9 +25,14 @@ export default function LoginPage() {
             });
 
             if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem('token', data.access_token);
-                router.push('/');
+                const data = await res.json();          
+                
+                if (data.access_token) {
+                    localStorage.setItem('token', data.access_token);
+                    router.push('/');
+                } else {
+                    setIsLoading(false);
+                }
             } else {
                 setError('Invalid credentials');
                 setIsLoading(false);
