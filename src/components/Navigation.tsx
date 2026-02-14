@@ -9,6 +9,16 @@ interface NavigationProps {
     user?: any;
 }
 
+// Helper function to convert string to Pascal case
+const toPascalCase = (str: string | undefined): string => {
+    if (!str) return '';
+    return str
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+};
+
 export default function Navigation({ user }: NavigationProps) {
     const router = useRouter();
     const pathname = usePathname();
@@ -96,7 +106,7 @@ export default function Navigation({ user }: NavigationProps) {
                     <div className={styles.userInfo}>
                         <div className={styles.avatar}>{user?.username?.[0]?.toUpperCase()}</div>
                         <div className={styles.userDetails}>
-                            <p className={styles.username}>{user?.username}</p>
+                            <p className={styles.username}>{toPascalCase(user?.username)}</p>
                             <p className={styles.role}>{user?.role}</p>
                         </div>
                     </div>
