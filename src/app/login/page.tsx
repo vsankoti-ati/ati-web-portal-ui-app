@@ -75,6 +75,9 @@ export default function LoginPage() {
                     </button>
                 </form>
                 <div style={{ marginTop: '1rem' }}>
+                    <button onClick={() => router.push('/forgot-password')}>Forgot Password?</button>
+                </div>
+                <div style={{ marginTop: '1rem' }}>
                     <button onClick={() => router.push('/signup')}>Sign Up</button>
                 </div>
             </div>
