@@ -62,6 +62,7 @@ export default function Navigation({ user }: NavigationProps) {
         { path: '/', label: 'Home', icon: '🏠' },
         { path: '/employees', label: 'Employees', icon: '🧑‍💼', roles: ['Admin', 'HR'] },
         { path: '/leave', label: 'Leave', icon: '🏖️' },
+        { path: '/work-from-home', label: 'Work From Home', icon: '🏡' },
         { path: '/timesheets', label: 'Timesheets', icon: '⏰' },
         { path: '/projects', label: 'Projects', icon: '📊' },
         { path: '/jobs', label: 'Job Openings', icon: '💼' },
