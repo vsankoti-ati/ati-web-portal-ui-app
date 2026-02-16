@@ -9,6 +9,8 @@
     margin-left: 260px;
     padding: 2rem;
     transition: margin-left 0.3s ease;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 .loading {

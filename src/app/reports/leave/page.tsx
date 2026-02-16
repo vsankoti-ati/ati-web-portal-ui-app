@@ -373,7 +373,7 @@ export default function LeaveReportsPage() {
 
     return (
         <DashboardLayout>
-            <div className={styles.container} style={{ maxWidth: '100%', overflowX: 'auto' }}>
+            <div className={`${styles.container} reportScrollable`}>
                 <header className={styles.header}>
                     <h1>Leave Reports</h1>
                     <p>Generate comprehensive leave reports for all employees</p>
@@ -504,7 +504,7 @@ export default function LeaveReportsPage() {
                 </div>
 
                 {reportData && (
-                    <div className={styles.reportResults} style={{ overflowX: 'auto', maxWidth: '1500px', boxSizing: 'border-box' }}>
+                    <div className={styles.reportResults}>
                         <div className={styles.reportHeader}>
                             <div>
                                 <h2>Report Results</h2>

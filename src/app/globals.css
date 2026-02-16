@@ -18,6 +18,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Allow horizontal scroll for report pages */
+body:has(.reportScrollable) {
+  overflow-x: auto;
+}
+
 .main {
   display: flex;
   flex-direction: column;

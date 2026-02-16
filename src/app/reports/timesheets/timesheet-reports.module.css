@@ -209,12 +209,13 @@
 
 .tableContainer {
     margin-top: 1rem;
-    overflow: visible;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .table {
-    width: 100% !important;
-    min-width: 1800px !important;
+    width: max-content;
+    min-width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
 }
