@@ -6,6 +6,18 @@ import DashboardLayout from '@/components/DashboardLayout';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './timesheet-reports.module.css';
 
+interface Employee {
+    id: string;
+    first_name: string;
+    last_name: string;
+    role: string;
+    email_id: string;
+    phone_number: string;
+    is_active: boolean;
+    geo_location: string;
+    admin_comments: string;
+}
+
 interface TimeEntry {
     projectId: string;
     projectName: string;
@@ -85,6 +97,13 @@ export default function TimesheetReportsPage() {
     const [reportData, setReportData] = useState<ReportData | null>(null);
     const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
     
+    // Employee filter states
+    const [allEmployees, setAllEmployees] = useState(true);
+    const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
+    const [selectedUserId, setSelectedUserId] = useState('');
+    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [loadingEmployees, setLoadingEmployees] = useState(false);
+    
     // Form states
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -121,15 +140,71 @@ export default function TimesheetReportsPage() {
                 setUserRole(data.role);
                 if (data.role !== 'Admin') {
                     setAccessDenied(true);
+                    setLoading(false);
+                    return;
                 }
+
+                // Fetch employees for dropdown if user is Admin
+                setLoadingEmployees(true);
+                fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employees`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error('Failed to fetch employees');
+                        }
+                        return res.json();
+                    })
+                    .then((employeesData) => {
+                        console.log('Fetched employees:', employeesData);
+                        setEmployees(Array.isArray(employeesData) ? employeesData : []);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching employees:', error);
+                    })
+                    .finally(() => {
+                        setLoadingEmployees(false);
+                        setLoading(false);
+                    });
             })
             .catch((error) => {
                 if (error.message !== 'Unauthorized') {
                     console.error(error);
                 }
-            })
-            .finally(() => setLoading(false));
+                setLoading(false);
+            });
     }, [router]);
+
+    // Fetch user details when employee is selected
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token || !selectedEmployeeId || allEmployees) {
+            setSelectedUserId('');
+            return;
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/employee/${selectedEmployeeId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+                return res.json();
+            })
+            .then((data) => {
+                if (data && data.id) {
+                    setSelectedUserId(data.id);
+                } else {
+                    console.error('User data missing id:', data);
+                    setSelectedUserId('');
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching user details:', error);
+                setSelectedUserId('');
+            });
+    }, [selectedEmployeeId, allEmployees]);
 
     const handleGenerateReport = async () => {
         const token = localStorage.getItem('token');
@@ -143,7 +218,7 @@ export default function TimesheetReportsPage() {
 
         try {
             const requestBody: any = {
-                userIds: [], // Empty array means all users
+                userIds: allEmployees ? [] : (selectedUserId ? [selectedUserId] : []),
                 includeEntries,
                 groupBy,
             };
@@ -182,30 +257,78 @@ export default function TimesheetReportsPage() {
     const downloadCSV = () => {
         if (!reportData) return;
 
-        // Create CSV header
-        const headers = ['Employee ID', 'Name', 'Email', 'Total Timesheets', 'Approved', 'Submitted', 'Draft', 'Total Hours', 'Approved Hours', 'Avg Hours/Week'];
-        const rows = [headers];
+        const rows: string[][] = [];
 
-        // Add data rows
-        reportData.reports.forEach(report => {
-            const row = [
-                report.user.employeeId,
-                `${report.user.firstName} ${report.user.lastName}`,
-                report.user.email,
-                report.summary.totalTimesheets.toString(),
-                report.summary.approvedTimesheets.toString(),
-                report.summary.submittedTimesheets.toString(),
-                report.summary.draftTimesheets.toString(),
-                report.summary.totalHours.toFixed(2),
-                report.summary.approvedHours.toFixed(2),
-                report.summary.averageHoursPerWeek.toFixed(2)
-            ];
-            rows.push(row);
+        reportData.reports.forEach((report, reportIndex) => {
+            // Add employee summary header
+            if (reportIndex > 0) {
+                rows.push([]); // Empty row for separation
+            }
+            
+            rows.push(['Employee Summary']);
+            rows.push(['Employee ID', report.user.employeeId]);
+            rows.push(['Name', `${report.user.firstName} ${report.user.lastName}`]);
+            rows.push(['Email', report.user.email]);
+            rows.push(['Report Period', `${report.reportPeriod.startDate} to ${report.reportPeriod.endDate}`]);
+            rows.push([]);
+
+            // Add summary section
+            rows.push(['Summary']);
+            rows.push(['Total Timesheets', report.summary.totalTimesheets.toString()]);
+            rows.push(['Approved', report.summary.approvedTimesheets.toString()]);
+            rows.push(['Submitted', report.summary.submittedTimesheets.toString()]);
+            rows.push(['Draft', report.summary.draftTimesheets.toString()]);
+            rows.push(['Total Hours', report.summary.totalHours.toFixed(2)]);
+            rows.push(['Approved Hours', report.summary.approvedHours.toFixed(2)]);
+            rows.push(['Avg Hours/Week', report.summary.averageHoursPerWeek.toFixed(2)]);
+            rows.push([]);
+
+            // Add project breakdown
+            if (report.summary.byProject && report.summary.byProject.length > 0) {
+                rows.push(['Project Breakdown']);
+                rows.push(['Project Name', 'Total Hours', 'Timesheet Count']);
+                report.summary.byProject.forEach(project => {
+                    rows.push([
+                        project.projectName,
+                        project.totalHours.toFixed(2),
+                        project.timesheetCount.toString()
+                    ]);
+                });
+                rows.push([]);
+            }
+
+            // Add timesheets with time entries if included
+            if (report.timesheets && report.timesheets.length > 0) {
+                rows.push(['Timesheets']);
+                report.timesheets.forEach((timesheet, idx) => {
+                    rows.push([
+                        `Timesheet ${idx + 1}`,
+                        `Week: ${timesheet.weekStartDate} to ${timesheet.weekEndDate}`,
+                        `Status: ${timesheet.status}`,
+                        `Total Hours: ${timesheet.totalHours.toFixed(2)}`
+                    ]);
+                    
+                    // Add time entries if included
+                    if (includeEntries && timesheet.timeEntries && timesheet.timeEntries.length > 0) {
+                        rows.push(['', 'Date', 'Project', 'Hours', 'Description']);
+                        timesheet.timeEntries.forEach(entry => {
+                            rows.push([
+                                '',
+                                entry.entryDate,
+                                entry.projectName,
+                                entry.hours.toFixed(2),
+                                entry.description || ''
+                            ]);
+                        });
+                    }
+                    rows.push([]);
+                });
+            }
         });
 
         // Convert to CSV string
         const csvContent = rows.map(row => 
-            row.map(cell => `"${cell}"`).join(',')
+            row.map(cell => `"${cell.toString().replace(/"/g, '""')}"`).join(',')
         ).join('\n');
 
         // Create blob and download
@@ -266,6 +389,42 @@ export default function TimesheetReportsPage() {
 
                 <div className={styles.reportForm}>
                     <h2>Report Configuration</h2>
+                    
+                    <div className={styles.formRow}>
+                        <div className={styles.formGroup}>
+                            <label className={styles.checkbox}>
+                                <input
+                                    type="checkbox"
+                                    checked={allEmployees}
+                                    onChange={(e) => {
+                                        setAllEmployees(e.target.checked);
+                                        if (e.target.checked) {
+                                            setSelectedEmployeeId('');
+                                            setSelectedUserId('');
+                                        }
+                                    }}
+                                />
+                                <span>All</span>
+                            </label>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="employeeSelect">Employee</label>
+                            <select
+                                id="employeeSelect"
+                                value={selectedEmployeeId}
+                                onChange={(e) => setSelectedEmployeeId(e.target.value)}
+                                disabled={allEmployees || loadingEmployees}
+                                className={styles.input}
+                            >
+                                <option value="">Select an employee</option>
+                                {employees.map((emp) => (
+                                    <option key={emp.id} value={emp.id}>
+                                        {emp.first_name} {emp.last_name} - {emp.email_id}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
                     
                     <div className={styles.formRow}>
                         <div className={styles.formGroup}>

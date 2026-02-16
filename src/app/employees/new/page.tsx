@@ -20,6 +20,7 @@ export default function NewEmployeePage() {
         date_of_joining: '',
         is_active: true,
         geo_location: '',
+        type: 'Full-time',
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -128,6 +129,41 @@ export default function NewEmployeePage() {
                                     placeholder="e.g., Software Engineer, HR Manager"
                                     required
                                 />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Employee Type *</label>
+                                <div className={styles.radioGroup}>
+                                    <label className={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="type"
+                                            value="Full-time"
+                                            checked={formData.type === 'Full-time'}
+                                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                        />
+                                        <span>Full-time</span>
+                                    </label>
+                                    <label className={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="type"
+                                            value="Part-time"
+                                            checked={formData.type === 'Part-time'}
+                                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                        />
+                                        <span>Part-time</span>
+                                    </label>
+                                    <label className={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="type"
+                                            value="Contract"
+                                            checked={formData.type === 'Contract'}
+                                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                        />
+                                        <span>Contract</span>
+                                    </label>
+                                </div>
                             </div>
                             <div className={styles.formGroup}>
                                 <label>Date of Joining *</label>
