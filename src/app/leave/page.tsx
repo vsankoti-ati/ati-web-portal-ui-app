@@ -178,7 +178,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                 </button>
                                 <button
                                     className={`${styles.applyBtn} ${styles.approvalBtn}`}
-                                    onClick={() => router.push('/leave/requests')}
+                                    onClick={() => router.push('/leave/approvals')}
                                 >
                                     📋 Approvals
                                 </button>
