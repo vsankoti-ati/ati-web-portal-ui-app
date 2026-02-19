@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import styles from './login.module.css';
 
 export default function LoginPage() {
 
@@ -44,10 +45,10 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="main">
+        <div className={styles.main}>
             {isLoading && <LoadingSpinner fullScreen message="Logging in..." />}
-            <div style={{ padding: '2rem', border: '1px solid #ccc', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <div className={styles.container}>
+                <div className={styles.logoWrapper}>
                     <Image 
                         src="/thumb-ati.png" 
                         alt="ATI Company Logo" 
@@ -56,34 +57,76 @@ export default function LoginPage() {
                         style={{ objectFit: 'contain' }}
                     />
                 </div>
-                <h1>Login</h1>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        style={{ padding: '0.5rem' }}
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={{ padding: '0.5rem' }}
-                    />
-                    <button type="submit" style={{ padding: '0.5rem', cursor: 'pointer' }} disabled={isLoading}>
+                
+                <h1 className={styles.title}>Welcome Back</h1>
+                
+                {error && (
+                    <div className={styles.errorBox}>
+                        <span>⚠️</span>
+                        <span>{error}</span>
+                    </div>
+                )}
+
+                <form onSubmit={handleLogin} className={styles.form}>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="username" className={styles.label}>
+                            Username
+                        </label>
+                        <input
+                            id="username"
+                            type="text"
+                            placeholder="Enter your username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            className={styles.input}
+                        />
+                    </div>
+                    
+                    <div className={styles.formGroup}>
+                        <label htmlFor="password" className={styles.label}>
+                            Password
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className={styles.input}
+                        />
+                    </div>
+
+                    <div className={styles.forgotPasswordWrapper}>
+                        <button 
+                            type="button"
+                            onClick={() => router.push('/forgot-password')}
+                            className={styles.forgotPasswordBtn}
+                        >
+                            Forgot Password?
+                        </button>
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        className={styles.submitBtn}
+                        disabled={isLoading}
+                    >
                         {isLoading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
-                <div style={{ marginTop: '1rem' }}>
-                    <button onClick={() => router.push('/forgot-password')}>Forgot Password?</button>
-                </div>
-                <div style={{ marginTop: '1rem' }}>
-                    <button onClick={() => router.push('/signup')}>Sign Up</button>
+
+                <div className={styles.signupSection}>
+                    <div className={styles.signupText}>
+                        Don't have an account?
+                    </div>
+                    <button 
+                        onClick={() => router.push('/signup')}
+                        className={styles.signupLink}
+                    >
+                        Create Account
+                    </button>
                 </div>
             </div>
         </div>

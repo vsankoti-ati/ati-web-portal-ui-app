@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import styles from './signup.module.css';
 
 export default function SignupPage() {
     const router = useRouter();
@@ -54,34 +55,18 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="main">
+        <div className={styles.main}>
             {isLoading && <LoadingSpinner fullScreen message="Creating account..." />}
-            {/* Success Toast Notification */}
+            
             {showToast && (
-                <div style={{
-                    position: 'fixed',
-                    top: '20px',
-                    right: '20px',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    color: 'white',
-                    padding: '1rem 1.5rem',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
-                    zIndex: 9999,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    animation: 'slideIn 0.3s ease-out',
-                    fontWeight: '600',
-                    fontSize: '1rem',
-                }}>
-                    <span style={{ fontSize: '1.5rem' }}>✓</span>
+                <div className={styles.toast}>
+                    <span>✓</span>
                     <span>User signed up successfully! Redirecting to login...</span>
                 </div>
             )}
 
-            <div style={{ padding: '2rem', border: '1px solid #ccc', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <div className={styles.container}>
+                <div className={styles.logoWrapper}>
                     <Image 
                         src="/thumb-ati.png" 
                         alt="ATI Company Logo" 
@@ -90,36 +75,121 @@ export default function SignupPage() {
                         style={{ objectFit: 'contain' }}
                     />
                 </div>
-                <h1>Sign Up</h1>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <input name="username" placeholder="Username" onChange={handleChange} required style={{ padding: '0.5rem' }} />
-                    <input name="email" type="email" placeholder="Email" onChange={handleChange} required style={{ padding: '0.5rem' }} />
-                    <input name="password" type="password" placeholder="Password" onChange={handleChange} required style={{ padding: '0.5rem' }} />
-                    <input name="first_name" placeholder="First Name" onChange={handleChange} required style={{ padding: '0.5rem' }} />
-                    <input name="last_name" placeholder="Last Name" onChange={handleChange} required style={{ padding: '0.5rem' }} />
-                    <button type="submit" style={{ padding: '0.5rem', cursor: 'pointer' }} disabled={isLoading}>
-                        {isLoading ? 'Signing up...' : 'Sign Up'}
+                
+                <h1 className={styles.title}>Create Account</h1>
+                <p className={styles.subtitle}>Join us today and get started</p>
+                
+                {error && (
+                    <div className={styles.errorBox}>
+                        <span>⚠️</span>
+                        <span>{error}</span>
+                    </div>
+                )}
+
+                <form onSubmit={handleSignup} className={styles.form}>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="username" className={styles.label}>
+                            Username
+                        </label>
+                        <input
+                            id="username"
+                            name="username"
+                            type="text"
+                            placeholder="Enter your username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            required
+                            className={styles.input}
+                        />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="email" className={styles.label}>
+                            Email Address
+                        </label>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className={styles.input}
+                        />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="password" className={styles.label}>
+                            Password
+                        </label>
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="Create a password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                            className={styles.input}
+                        />
+                    </div>
+
+                    <div className={styles.formRow}>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="first_name" className={styles.label}>
+                                First Name
+                            </label>
+                            <input
+                                id="first_name"
+                                name="first_name"
+                                type="text"
+                                placeholder="First name"
+                                value={formData.first_name}
+                                onChange={handleChange}
+                                required
+                                className={styles.input}
+                            />
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label htmlFor="last_name" className={styles.label}>
+                                Last Name
+                            </label>
+                            <input
+                                id="last_name"
+                                name="last_name"
+                                type="text"
+                                placeholder="Last name"
+                                value={formData.last_name}
+                                onChange={handleChange}
+                                required
+                                className={styles.input}
+                            />
+                        </div>
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        className={styles.submitBtn}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Creating Account...' : 'Create Account'}
                     </button>
                 </form>
-                <div style={{ marginTop: '1rem' }}>
-                    <button onClick={() => router.push('/login')}>Back to Login</button>
+
+                <div className={styles.loginSection}>
+                    <div className={styles.loginText}>
+                        Already have an account?
+                    </div>
+                    <button 
+                        onClick={() => router.push('/login')}
+                        className={styles.loginLink}
+                    >
+                        Back to Login
+                    </button>
                 </div>
             </div>
-
-            {/* Keyframe animation for toast */}
-            <style jsx>{`
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(400px);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-            `}</style>
         </div>
     );
 }
