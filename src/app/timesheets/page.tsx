@@ -28,6 +28,10 @@ export default function TimesheetsPage() {
     const [myCurrentPage, setMyCurrentPage] = useState(1);
     const [adminCurrentPage, setAdminCurrentPage] = useState(1);
     const pageSize = 5;
+    const [showCancelPopup, setShowCancelPopup] = useState(false);
+    const [cancelTimesheetId, setCancelTimesheetId] = useState<string | null>(null);
+    const [submitterComments, setSubmitterComments] = useState('');
+    const [isCancelling, setIsCancelling] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -127,6 +131,56 @@ export default function TimesheetsPage() {
     const adminEndIndex = adminStartIndex + pageSize;
     const paginatedAdminTimesheets = filteredAdminTimesheets.slice(adminStartIndex, adminEndIndex);
 
+    const handleCancelClick = (timesheetId: string) => {
+        setCancelTimesheetId(timesheetId);
+        setSubmitterComments('');
+        setShowCancelPopup(true);
+    };
+
+    const handleCancelConfirm = async () => {
+        if (!cancelTimesheetId || !submitterComments.trim()) {
+            alert('Please provide comments for cancellation');
+            return;
+        }
+
+        setIsCancelling(true);
+        const token = localStorage.getItem('token');
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/${cancelTimesheetId}/cancel`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ submitter_comments: submitterComments }),
+            });
+
+            if (res.ok) {
+                // Remove the cancelled timesheet from the list
+                setMyTimesheets(myTimesheets.filter(ts => ts.id !== cancelTimesheetId));
+                setAllTimesheets(allTimesheets.filter(ts => ts.id !== cancelTimesheetId));
+                setShowCancelPopup(false);
+                setCancelTimesheetId(null);
+                setSubmitterComments('');
+            } else {
+                const errorData = await res.json();
+                alert(`Failed to cancel timesheet: ${errorData.message || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error cancelling timesheet:', error);
+            alert('An error occurred while cancelling the timesheet');
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
+    const canCancelTimesheet = (ts: Timesheet) => {
+        const status = ts.status.toLowerCase();
+        // Allow cancellation only for draft or submitted status
+        return status === 'draft' || status === 'submitted';
+    };
+
     const renderTimesheetTable = (timesheets: Timesheet[], currentPage: number, totalPages: number, setPage: (page: number) => void) => {
         if (timesheets.length === 0) {
             return (
@@ -166,12 +220,22 @@ export default function TimesheetsPage() {
                                 </td>
                                 <td>{ts.approver_comments || '-'}</td>
                                 <td>
-                                    <button
-                                        className={styles.viewBtn}
-                                        onClick={() => router.push(`/timesheets/${ts.id}`)}
-                                    >
-                                        View Details
-                                    </button>
+                                    <div className={styles.actionButtons}>
+                                        <button
+                                            className={styles.viewBtn}
+                                            onClick={() => router.push(`/timesheets/${ts.id}`)}
+                                        >
+                                            View Details
+                                        </button>
+                                        {canCancelTimesheet(ts) && (
+                                            <button
+                                                onClick={() => handleCancelClick(ts.id)}
+                                                className={styles.cancelBtn}
+                                            >
+                                                Cancel
+                                            </button>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -208,6 +272,44 @@ export default function TimesheetsPage() {
 
     return (
         <DashboardLayout>
+            {isCancelling && <LoadingSpinner fullScreen message="Cancelling timesheet..." />}
+            {showCancelPopup && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <h2>Cancel Timesheet</h2>
+                        <p>Please provide comments for cancellation:</p>
+                        <div className={styles.formGroup}>
+                            <textarea
+                                value={submitterComments}
+                                onChange={(e) => setSubmitterComments(e.target.value)}
+                                rows={4}
+                                placeholder="Enter cancellation comments..."
+                                className={styles.cancelTextarea}
+                                required
+                            />
+                        </div>
+                        <div className={styles.modalActions}>
+                            <button
+                                onClick={() => {
+                                    setShowCancelPopup(false);
+                                    setCancelTimesheetId(null);
+                                    setSubmitterComments('');
+                                }}
+                                className={styles.cancelModalBtn}
+                            >
+                                Close
+                            </button>
+                            <button
+                                onClick={handleCancelConfirm}
+                                className={styles.confirmCancelBtn}
+                                disabled={!submitterComments.trim()}
+                            >
+                                Confirm Cancellation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className={styles.container}>
                 {/* My Timesheets Section */}
                 <div className={styles.section}>

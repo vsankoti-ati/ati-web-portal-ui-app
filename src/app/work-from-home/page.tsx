@@ -30,6 +30,10 @@ export default function WorkFromHomePage() {
         end_date: '',
         reason: '',
     });
+    const [showCancelPopup, setShowCancelPopup] = useState(false);
+    const [cancelRequestId, setCancelRequestId] = useState<string | null>(null);
+    const [cancelReason, setCancelReason] = useState('');
+    const [isCancelling, setIsCancelling] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -116,6 +120,60 @@ export default function WorkFromHomePage() {
         }
     };
 
+    const handleCancelClick = (requestId: string) => {
+        setCancelRequestId(requestId);
+        setCancelReason('');
+        setShowCancelPopup(true);
+    };
+
+    const handleCancelConfirm = async () => {
+        if (!cancelRequestId || !cancelReason.trim()) {
+            alert('Please provide a reason for cancellation');
+            return;
+        }
+
+        setIsCancelling(true);
+        const token = localStorage.getItem('token');
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/wfh/${cancelRequestId}/cancel`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ reason: cancelReason }),
+            });
+
+            if (res.ok) {
+                // Remove the cancelled request from the list
+                setRequests(requests.filter(req => req.id !== cancelRequestId));
+                setShowCancelPopup(false);
+                setCancelRequestId(null);
+                setCancelReason('');
+            } else {
+                const errorData = await res.json();
+                alert(`Failed to cancel request: ${errorData.message || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error cancelling WFH request:', error);
+            alert('An error occurred while cancelling the request');
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
+    const canCancelRequest = (request: WFHRequest) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const startDate = new Date(request.start_date);
+        startDate.setHours(0, 0, 0, 0);
+        const status = request.status.toLowerCase();
+        
+        // Allow cancellation only for pending/submitted status and future dates
+        return (status === 'pending' || status === 'submitted') && startDate >= today;
+    };
+
     const getStatusStyle = (status: string) => {
         switch (status.toLowerCase()) {
             case 'approved':
@@ -139,6 +197,44 @@ export default function WorkFromHomePage() {
     return (
         <DashboardLayout>
             {isSubmitting && <LoadingSpinner fullScreen message="Submitting request..." />}
+            {isCancelling && <LoadingSpinner fullScreen message="Cancelling request..." />}
+            {showCancelPopup && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <h2>Cancel Work From Home Request</h2>
+                        <p>Please provide a reason for cancellation:</p>
+                        <div className={styles.formGroup}>
+                            <textarea
+                                value={cancelReason}
+                                onChange={(e) => setCancelReason(e.target.value)}
+                                rows={4}
+                                placeholder="Enter cancellation reason..."
+                                className={styles.cancelTextarea}
+                                required
+                            />
+                        </div>
+                        <div className={styles.modalActions}>
+                            <button
+                                onClick={() => {
+                                    setShowCancelPopup(false);
+                                    setCancelRequestId(null);
+                                    setCancelReason('');
+                                }}
+                                className={styles.cancelModalBtn}
+                            >
+                                Close
+                            </button>
+                            <button
+                                onClick={handleCancelConfirm}
+                                className={styles.confirmCancelBtn}
+                                disabled={!cancelReason.trim()}
+                            >
+                                Confirm Cancellation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h1>Work From Home</h1>
@@ -219,6 +315,7 @@ export default function WorkFromHomePage() {
                                         <th>Status</th>
                                         <th>Approver Comments</th>
                                         <th>Requested On</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -234,6 +331,16 @@ export default function WorkFromHomePage() {
                                             </td>
                                             <td>{request.approver_comments || '-'}</td>
                                             <td>{new Date(request.created_at).toLocaleDateString()}</td>
+                                            <td>
+                                                {canCancelRequest(request) && (
+                                                    <button
+                                                        onClick={() => handleCancelClick(request.id)}
+                                                        className={styles.cancelBtnTable}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                )}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

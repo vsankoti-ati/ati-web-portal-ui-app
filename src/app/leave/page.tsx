@@ -42,6 +42,10 @@ export default function LeavePage({ userId }: LeavePageProps) {
         end_date: '',
         reason: '',
     });
+    const [showCancelPopup, setShowCancelPopup] = useState(false);
+    const [cancelLeaveId, setCancelLeaveId] = useState<string | null>(null);
+    const [cancelReason, setCancelReason] = useState('');
+    const [isCancelling, setIsCancelling] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -132,7 +136,12 @@ export default function LeavePage({ userId }: LeavePageProps) {
         e.preventDefault();
         setIsApplying(true);
         const token = localStorage.getItem('token');
-        const request = { ...formData, employee_id: employeeId };
+        const request = { 
+            ...formData, 
+            start_date: new Date(formData.start_date).toISOString(),
+            end_date: new Date(formData.end_date).toISOString(),
+            employee_id: employeeId 
+        };
 
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/apply`, {
@@ -157,6 +166,60 @@ export default function LeavePage({ userId }: LeavePageProps) {
         }
     };
 
+    const handleCancelClick = (leaveId: string) => {
+        setCancelLeaveId(leaveId);
+        setCancelReason('');
+        setShowCancelPopup(true);
+    };
+
+    const handleCancelConfirm = async () => {
+        if (!cancelLeaveId || !cancelReason.trim()) {
+            alert('Please provide a reason for cancellation');
+            return;
+        }
+
+        setIsCancelling(true);
+        const token = localStorage.getItem('token');
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/leave/${cancelLeaveId}/cancel`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ reason: cancelReason }),
+            });
+
+            if (res.ok) {
+                // Remove the cancelled leave from the list or update its status
+                setApplications(applications.filter(app => app.id !== cancelLeaveId));
+                setShowCancelPopup(false);
+                setCancelLeaveId(null);
+                setCancelReason('');
+            } else {
+                const errorData = await res.json();
+                alert(`Failed to cancel leave: ${errorData.message || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error cancelling leave:', error);
+            alert('An error occurred while cancelling the leave');
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
+    const canCancelLeave = (app: LeaveApplication) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const startDate = new Date(app.start_date);
+        startDate.setHours(0, 0, 0, 0);
+        const status = app.status.toLowerCase();
+        
+        // Allow cancellation only for pending/submitted status and future dates
+        return (status === 'pending' || status === 'submitted') && startDate >= today;
+    };
+
     if (loading) {
         return <LoadingSpinner fullScreen message="Loading leave information..." />;
     }
@@ -164,6 +227,44 @@ export default function LeavePage({ userId }: LeavePageProps) {
     return (
         <DashboardLayout>
             {isApplying && <LoadingSpinner fullScreen message="Submitting leave application..." />}
+            {isCancelling && <LoadingSpinner fullScreen message="Cancelling leave application..." />}
+            {showCancelPopup && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <h2>Cancel Leave Application</h2>
+                        <p>Please provide a reason for cancellation:</p>
+                        <div className={styles.formGroup}>
+                            <textarea
+                                value={cancelReason}
+                                onChange={(e) => setCancelReason(e.target.value)}
+                                rows={4}
+                                placeholder="Enter cancellation reason..."
+                                className={styles.cancelTextarea}
+                                required
+                            />
+                        </div>
+                        <div className={styles.modalActions}>
+                            <button
+                                onClick={() => {
+                                    setShowCancelPopup(false);
+                                    setCancelLeaveId(null);
+                                    setCancelReason('');
+                                }}
+                                className={styles.cancelModalBtn}
+                            >
+                                Close
+                            </button>
+                            <button
+                                onClick={handleCancelConfirm}
+                                className={styles.confirmCancelBtn}
+                                disabled={!cancelReason.trim()}
+                            >
+                                Confirm Cancellation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h1>Leave Management</h1>
@@ -283,23 +384,36 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                         <th>From</th>
                                         <th>To</th>
                                         <th>Status</th>
+                                        <th>Reason</th>
                                         <th>Applied</th>
                                         <th>Approver Comments</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {applications.map((app) => (
                                         <tr key={app.id}>
                                             <td>{app.leave_type}</td>
-                                            <td>{new Date(app.start_date).toLocaleDateString()}</td>
-                                            <td>{new Date(app.end_date).toLocaleDateString()}</td>
+                                            <td>{new Date(app.start_date).toISOString().split('T')[0]}</td>
+                                            <td>{new Date(app.end_date).toISOString().split('T')[0]}</td>
                                             <td>
                                                 <span className={`${styles.statusBadge} ${styles[app.status.toLowerCase()]}`}>
                                                     {app.status}
                                                 </span>
                                             </td>
+                                            <td>{app.reason || '-'}</td>
                                             <td>{new Date(app.applied_date).toLocaleDateString()}</td>
                                             <td>{app.approver_comments || '-'}</td>
+                                            <td>
+                                                {canCancelLeave(app) && (
+                                                    <button
+                                                        onClick={() => handleCancelClick(app.id)}
+                                                        className={styles.cancelBtn}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                )}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
