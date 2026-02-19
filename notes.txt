@@ -1,5 +1,5 @@
 az login
 az acr login --name atiwebrepository (docker desktop should be open)
 docker build -t ati-web-portal-ui --build-arg NEXT_PUBLIC_API_BASE_URL=https://ati-web-portal-api.graydune-f4d1fcea.eastus.azurecontainerapps.io .
-docker tag ati-web-portal-ui atiwebrepository.azurecr.io/ati-web-portal-ui:v4.2
-docker push atiwebrepository.azurecr.io/ati-web-portal-ui:v4.2
+docker tag ati-web-portal-ui atiwebrepository.azurecr.io/ati-web-portal-ui:v4.3
+docker push atiwebrepository.azurecr.io/ati-web-portal-ui:v4.3
