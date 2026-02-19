@@ -1,16 +1,18 @@
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .header h1 {
     margin: 1rem 0 0 0;
     color: #2c3e50;
-    font-size: 2rem;
+    font-size: 2.2rem;
+    font-weight: 700;
 }
 
 .backBtn {
@@ -23,40 +25,60 @@
     font-weight: 600;
     transition: all 0.3s;
     margin-bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .backBtn:hover {
     background: #667eea;
     color: white;
+    transform: translateX(-3px);
 }
 
 .formCard {
     background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
 }
 
 .section {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     padding-bottom: 2rem;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 1px solid #e8e8e8;
 }
 
 .section:last-of-type {
     border-bottom: none;
+    margin-bottom: 0;
 }
 
 .section h2 {
     margin: 0 0 1.5rem 0;
     color: #2c3e50;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.section h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
 }
 
 .formRow {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .formGroup {
@@ -65,7 +87,7 @@
 
 .formGroup label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     color: #2c3e50;
     font-weight: 600;
     font-size: 0.95rem;
@@ -74,18 +96,77 @@
 .formGroup input[type="text"],
 .formGroup input[type="email"],
 .formGroup input[type="tel"],
-.formGroup input[type="date"] {
+.formGroup input[type="date"],
+.selectInput {
     width: 100%;
-    padding: 0.8rem;
+    padding: 0.9rem 1rem;
     border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1rem;
-    transition: border-color 0.3s;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: #fafafa;
 }
 
-.formGroup input:focus {
+.formGroup input:focus,
+.selectInput:focus {
     outline: none;
     border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.selectInput {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+.radioGroup {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.75rem 1.25rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    font-weight: 500;
+    color: #555;
+}
+
+.radioLabel:hover {
+    border-color: #667eea;
+    background: white;
+}
+
+.radioLabel input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.radioLabel input[type="radio"]:checked + span {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.radioLabel:has(input[type="radio"]:checked) {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
 }
 
 .checkboxLabel {
@@ -93,99 +174,146 @@
     align-items: center;
     gap: 0.75rem;
     cursor: pointer;
-    padding: 0.5rem 0;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    margin-top: 0.5rem;
+}
+
+.checkboxLabel:hover {
+    border-color: #667eea;
+    background: white;
 }
 
 .checkboxLabel input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
+    accent-color: #667eea;
 }
 
 .checkboxLabel span {
-    font-weight: 500;
+    font-weight: 600;
     color: #2c3e50;
+}
+
+.checkboxLabel:has(input[type="checkbox"]:checked) {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
 }
 
 .actions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     padding-top: 2rem;
-    border-top: 2px solid #f0f0f0;
+    border-top: 1px solid #e8e8e8;
 }
 
 .cancelBtn {
-    padding: 0.8rem 1.5rem;
-    background: #f8f9fa;
-    color: #666;
+    padding: 0.9rem 1.8rem;
+    background: white;
+    color: #555;
     border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.3s;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
-.cancelBtn:hover {
-    background: #e9ecef;
+.cancelBtn:hover:not(:disabled) {
+    background: #f8f9fa;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.cancelBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .submitBtn {
-    padding: 0.8rem 2rem;
+    padding: 0.9rem 2.2rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: transform 0.2s;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.submitBtn:hover {
+.submitBtn:hover:not(:disabled) {
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submitBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* Mobile and Tablet Responsive Styles */
 @media (max-width: 768px) {
     .container {
-        padding: 0 1rem;
+        padding: 0 0.5rem;
     }
 
     .header h1 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
     }
 
     .backBtn {
         width: 100%;
         text-align: center;
+        justify-content: center;
     }
 
     .formCard {
         padding: 1.5rem;
+        border-radius: 12px;
     }
 
     .section h2 {
-        font-size: 1.15rem;
+        font-size: 1.2rem;
     }
 
     .formRow {
         grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .radioGroup {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .radioLabel {
+        width: 100%;
     }
 
     .actions {
         flex-direction: column-reverse;
+        gap: 0.75rem;
     }
 
     .cancelBtn,
     .submitBtn {
         width: 100%;
+        padding: 1rem;
     }
 }
 
 @media (max-width: 480px) {
     .header h1 {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
     }
 
     .formCard {
@@ -194,5 +322,14 @@
 
     .section h2 {
         font-size: 1.1rem;
+    }
+
+    .formGroup input[type="text"],
+    .formGroup input[type="email"],
+    .formGroup input[type="tel"],
+    .formGroup input[type="date"],
+    .selectInput {
+        padding: 0.75rem;
+        font-size: 0.95rem;
     }
 }

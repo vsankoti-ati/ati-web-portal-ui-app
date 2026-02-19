@@ -180,6 +180,8 @@ export default function WorkFromHomePage() {
                 return styles.statusApproved;
             case 'rejected':
                 return styles.statusRejected;
+            case 'cancelled':
+                return styles.statusCancelled;
             case 'pending':
             default:
                 return styles.statusPending;

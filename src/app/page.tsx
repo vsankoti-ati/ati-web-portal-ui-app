@@ -92,47 +92,99 @@ export default function Home() {
     return (
         <DashboardLayout>
             <div className={styles.content}>
-                <section className={styles.welcome}>
-                    <h1>Welcome to the Intranet Portal</h1>
-                    <p>Your central hub for employee services, leave management, and company updates.</p>
+                <section className={styles.hero}>
+                    <div className={styles.heroContent}>
+                        <div className={styles.welcomeText}>
+                            <h1>Welcome back{user && `, ${user.first_name || user.email_id}`}! 👋</h1>
+                            <p>Your central hub for employee services, leave management, and company updates.</p>
+                        </div>
+                        {user && (
+                            <div className={styles.userCard}>
+                                <div className={styles.userAvatar}>
+                                    {user.first_name?.[0] || user.email_id?.[0] || 'U'}
+                                </div>
+                                <div className={styles.userInfo}>
+                                    <h3>{user.first_name} {user.last_name}</h3>
+                                    <p className={styles.userRole}>{user.role || 'Employee'}</p>
+                                    <p className={styles.userEmail}>{user.email_id}</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </section>
 
                 <section className={styles.quickLinks}>
                     <h2>Quick Access</h2>
                     <div className={styles.cardGrid}>
-                        <div className={styles.card} onClick={handleEditProfile} style={{ cursor: 'pointer' }}>
-                            <h3>👤 Edit Profile</h3>
-                            <p>Update your information</p>
+                        <div className={`${styles.card} ${styles.cardProfile}`} onClick={handleEditProfile}>
+                            <div className={styles.cardIcon}>👤</div>
+                            <div className={styles.cardContent}>
+                                <h3>Edit Profile</h3>
+                                <p>Update your information</p>
+                            </div>
+                            <div className={styles.cardArrow}>→</div>
                         </div>
-                        <div className={styles.card} onClick={() => router.push('/leave')}>
-                            <h3>🏖️ Leave Management</h3>
-                            <p>Apply and track leave</p>
+                        <div className={`${styles.card} ${styles.cardLeave}`} onClick={() => router.push('/leave')}>
+                            <div className={styles.cardIcon}>🏖️</div>
+                            <div className={styles.cardContent}>
+                                <h3>Leave Management</h3>
+                                <p>Apply and track leave</p>
+                            </div>
+                            <div className={styles.cardArrow}>→</div>
                         </div>
-                        <div className={styles.card} onClick={() => router.push('/timesheets')}>
-                            <h3>⏰ Timesheets</h3>
-                            <p>Submit work hours</p>
+                        <div className={`${styles.card} ${styles.cardTimesheet}`} onClick={() => router.push('/timesheets')}>
+                            <div className={styles.cardIcon}>⏰</div>
+                            <div className={styles.cardContent}>
+                                <h3>Timesheets</h3>
+                                <p>Submit work hours</p>
+                            </div>
+                            <div className={styles.cardArrow}>→</div>
                         </div>
-                        <div className={styles.card} onClick={() => router.push('/jobs')}>
-                            <h3>💼 Job Referrals</h3>
-                            <p>Refer candidates</p>
+                        <div className={`${styles.card} ${styles.cardJobs}`} onClick={() => router.push('/jobs')}>
+                            <div className={styles.cardIcon}>💼</div>
+                            <div className={styles.cardContent}>
+                                <h3>Job Referrals</h3>
+                                <p>Refer candidates</p>
+                            </div>
+                            <div className={styles.cardArrow}>→</div>
                         </div>
                     </div>
                 </section>
 
                 <section className={styles.announcements}>
-                    <h2>Latest Announcements</h2>
+                    <div className={styles.sectionHeader}>
+                        <h2>📢 Latest Announcements</h2>
+                        <span className={styles.badge}>{announcements.length} updates</span>
+                    </div>
                     {announcements.length === 0 ? (
-                        <p>No announcements at this time.</p>
+                        <div className={styles.emptyState}>
+                            <div className={styles.emptyIcon}>📭</div>
+                            <p>No announcements at this time.</p>
+                        </div>
                     ) : (
                         <div className={styles.announcementList}>
                             {announcements.map((ann) => (
                                 <div key={ann.id} className={`${styles.announcement} ${styles[ann.priority.toLowerCase()]}`}>
-                                    <div className={styles.announcementHeader}>
-                                        <h4>{ann.title}</h4>
-                                        <span className={styles.category}>{ann.category}</span>
+                                    <div className={styles.priorityIndicator}></div>
+                                    <div className={styles.announcementContent}>
+                                        <div className={styles.announcementHeader}>
+                                            <div>
+                                                <h4>{ann.title}</h4>
+                                                <small>{new Date(ann.created_at).toLocaleDateString('en-US', { 
+                                                    year: 'numeric', 
+                                                    month: 'long', 
+                                                    day: 'numeric' 
+                                                })}</small>
+                                            </div>
+                                            <div className={styles.tags}>
+                                                <span className={styles.category}>{ann.category}</span>
+                                                <span className={`${styles.priority} ${styles[ann.priority.toLowerCase() + 'Priority']}`}>
+                                                    {ann.priority}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <p>{ann.content}</p>
                                     </div>
-                                    <p>{ann.content}</p>
-                                    <small>{new Date(ann.created_at).toLocaleDateString()}</small>
                                 </div>
                             ))}
                         </div>

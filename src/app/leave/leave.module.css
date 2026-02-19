@@ -1,60 +1,95 @@
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .header h1 {
     margin: 0;
     color: #2c3e50;
-    font-size: 2rem;
+    font-size: 2.2rem;
+    font-weight: 700;
 }
 
 .headerActions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .applyBtn {
-    padding: 0.8rem 1.5rem;
+    padding: 0.9rem 1.8rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: transform 0.2s;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    white-space: nowrap;
 }
 
 .applyBtn:hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .approvalBtn {
     background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.approvalBtn:hover {
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
 }
 
 .balanceBtn {
     background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.balanceBtn:hover {
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
 }
 
 .formCard {
     background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-bottom: 2rem;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2.5rem;
+    border: 1px solid #f0f0f0;
 }
 
 .formCard h2 {
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 2rem 0;
     color: #2c3e50;
+    font-size: 1.6rem;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.formCard h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
 }
 
 .formGroup {
@@ -63,20 +98,24 @@
 
 .formGroup label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     color: #2c3e50;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .formGroup input,
 .formGroup select,
 .formGroup textarea {
     width: 100%;
-    padding: 0.8rem;
+    padding: 0.9rem 1rem;
     border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1rem;
-    transition: border-color 0.3s;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: #fafafa;
 }
 
 .formGroup input:focus,
@@ -84,36 +123,58 @@
 .formGroup textarea:focus {
     outline: none;
     border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.formGroup select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
 .formRow {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .submitBtn {
-    padding: 0.8rem 2rem;
-    background: #667eea;
+    padding: 0.9rem 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.3s;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    margin-top: 0.5rem;
 }
 
 .submitBtn:hover {
-    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .balanceSection {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .balanceSection h2 {
-    margin: 0 0 1rem 0;
+    margin: 0 0 1.5rem 0;
     color: #2c3e50;
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
 .balanceGrid {
@@ -122,43 +183,80 @@
     gap: 1.5rem;
 }
 
+.defaultBalances {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
 .balanceCard {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2rem;
+    background: white;
+    border: 2px solid #e8e8e8;
+    padding: 1.25rem 1.5rem;
     border-radius: 12px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.balanceCard:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
 }
 
 .balanceCard h3 {
-    margin: 0 0 1rem 0;
-    font-size: 1.1rem;
-    opacity: 0.9;
+    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
 .balanceAmount {
     margin: 0;
-    font-size: 3rem;
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .balanceLabel {
     margin: 0.5rem 0 0 0;
-    opacity: 0.8;
-    font-size: 0.9rem;
+    color: #95a5a6;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.noData {
+    text-align: center;
+    padding: 1rem 0;
+    color: #7f8c8d;
+}
+
+.noData p {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
 }
 
 .applicationsSection h2 {
-    margin: 0 0 1rem 0;
+    margin: 0 0 1.5rem 0;
     color: #2c3e50;
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
 .tableWrapper {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     overflow-x: auto;
+    border: 1px solid #f0f0f0;
 }
 
 .leaveTable {
@@ -202,40 +300,64 @@
 }
 
 .statusBadge {
-    padding: 0.4rem 0.8rem;
+    padding: 0.5rem 1rem;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 600;
     white-space: nowrap;
     display: inline-block;
 }
 
-.statusBadge.pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
+.statusBadge.pending,
 .statusBadge.submitted {
     background: #fff3cd;
     color: #856404;
+    border: 1px solid #ffc107;
 }
 
 .statusBadge.approved {
     background: #d4edda;
     color: #155724;
+    border: 1px solid #28a745;
 }
 
 .statusBadge.rejected {
     background: #f8d7da;
     color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+.statusBadge.cancelled {
+    background: #e9ecef;
+    color: #495057;
+    border: 1px solid #6c757d;
+}
+
+.cancelBtn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.cancelBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
 }
 
 .empty {
     text-align: center;
     padding: 4rem 2rem;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
 }
 
 .empty p {
@@ -433,87 +555,125 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .modal {
     background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 550px;
     width: 90%;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .modal h2 {
     margin: 0 0 1rem 0;
     color: #2c3e50;
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
 .modal p {
-    margin: 0 0 1rem 0;
+    margin: 0 0 1.5rem 0;
     color: #7f8c8d;
+    font-size: 1rem;
 }
 
 .cancelTextarea {
     width: 100%;
-    min-height: 100px;
-    padding: 0.8rem;
+    min-height: 120px;
+    padding: 1rem;
     border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1rem;
     font-family: inherit;
     resize: vertical;
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    box-sizing: border-box;
 }
 
 .cancelTextarea:focus {
     outline: none;
     border-color: #e74c3c;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
 }
 
 .modalActions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
 }
 
 .cancelModalBtn {
-    padding: 0.8rem 1.5rem;
-    background: #95a5a6;
-    color: white;
-    border: none;
-    border-radius: 8px;
+    padding: 0.9rem 1.8rem;
+    background: white;
+    color: #555;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.3s;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
 .cancelModalBtn:hover {
-    background: #7f8c8d;
+    background: #f8f9fa;
+    border-color: #667eea;
+    color: #667eea;
 }
 
 .confirmCancelBtn {
-    padding: 0.8rem 1.5rem;
-    background: #e74c3c;
+    padding: 0.9rem 1.8rem;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.3s;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
-.confirmCancelBtn:hover {
-    background: #c0392b;
+.confirmCancelBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
 }
 
 .confirmCancelBtn:disabled {
     background: #bdc3c7;
     cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
 }

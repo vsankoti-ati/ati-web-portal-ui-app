@@ -107,6 +107,18 @@
     color: #155724;
 }
 
+.statusBadge.rejected {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+.statusBadge.cancelled {
+    background: #e9ecef;
+    color: #495057;
+    border: 1px solid #6c757d;
+}
+
 .viewBtn {
     padding: 0.5rem 1rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

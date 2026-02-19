@@ -204,6 +204,11 @@
     color: #d63031;
 }
 
+.statusCancelled {
+    background: #e9ecef;
+    color: #495057;
+}
+
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
