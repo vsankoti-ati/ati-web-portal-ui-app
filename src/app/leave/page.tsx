@@ -46,6 +46,8 @@ export default function LeavePage({ userId }: LeavePageProps) {
     const [cancelLeaveId, setCancelLeaveId] = useState<string | null>(null);
     const [cancelReason, setCancelReason] = useState('');
     const [isCancelling, setIsCancelling] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(5);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -110,6 +112,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                             .then((apps) => {
                                 console.log('Leave applications data:', apps);
                                 setApplications(Array.isArray(apps) ? apps : []);
+                                setCurrentPage(1); // Reset to first page when data loads
                             })
                             .catch((error) => {
                                 console.error('Error fetching leave applications:', error);
@@ -155,9 +158,10 @@ export default function LeavePage({ userId }: LeavePageProps) {
 
             if (res.ok) {
                 const newApp = await res.json();
-                setApplications([...applications, newApp]);
+                setApplications([newApp, ...applications]);
                 setShowApplyForm(false);
                 setFormData({ leave_type: 'Earned', start_date: '', end_date: '', reason: '' });
+                setCurrentPage(1); // Reset to first page to show new application
             }
         } catch (error) {
             console.error('Error applying for leave:', error);
@@ -192,13 +196,24 @@ export default function LeavePage({ userId }: LeavePageProps) {
             });
 
             if (res.ok) {
-                // Remove the cancelled leave from the list or update its status
-                setApplications(applications.filter(app => app.id !== cancelLeaveId));
+                console.log('Leave cancelled successfully, updating status');
+                const responseData = await res.json();
+                
+                // Update the status of the cancelled leave application
+                const updatedApplications = applications.map(app => 
+                    app.id === cancelLeaveId 
+                        ? { ...app, status: responseData.status || 'Cancelled', approver_comments: cancelReason }
+                        : app
+                );
+                console.log('Updated applications:', updatedApplications.length);
+                setApplications(updatedApplications);
+                
                 setShowCancelPopup(false);
                 setCancelLeaveId(null);
                 setCancelReason('');
             } else {
-                const errorData = await res.json();
+                console.error('Failed to cancel leave, status:', res.status);
+                const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
                 alert(`Failed to cancel leave: ${errorData.message || 'Unknown error'}`);
             }
         } catch (error) {
@@ -210,19 +225,29 @@ export default function LeavePage({ userId }: LeavePageProps) {
     };
 
     const canCancelLeave = (app: LeaveApplication) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const startDate = new Date(app.start_date);
-        startDate.setHours(0, 0, 0, 0);
+       
+        
         const status = app.status.toLowerCase();
         
-        // Allow cancellation only for pending/submitted status and future dates
-        return (status === 'pending' || status === 'submitted') && startDate >= today;
+        console.log('Cancel check:', { status, result: (status === 'pending' || status === 'submitted')});
+        
+        // Allow cancellation only for pending/submitted status and future dates or today
+        return (status === 'pending' || status === 'submitted') 
     };
 
     if (loading) {
         return <LoadingSpinner fullScreen message="Loading leave information..." />;
     }
+
+    // Pagination calculations
+    const totalPages = Math.ceil(applications.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedApplications = applications.slice(startIndex, endIndex);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
     return (
         <DashboardLayout>
@@ -376,49 +401,83 @@ export default function LeavePage({ userId }: LeavePageProps) {
                 <div className={styles.applicationsSection}>
                     <h2>Leave Applications</h2>
                     {applications.length > 0 ? (
-                        <div className={styles.tableWrapper}>
-                            <table className={styles.leaveTable}>
-                                <thead>
-                                    <tr>
-                                        <th>Type</th>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Status</th>
-                                        <th>Reason</th>
-                                        <th>Applied</th>
-                                        <th>Approver Comments</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {applications.map((app) => (
-                                        <tr key={app.id}>
-                                            <td>{app.leave_type}</td>
-                                            <td>{new Date(app.start_date).toISOString().split('T')[0]}</td>
-                                            <td>{new Date(app.end_date).toISOString().split('T')[0]}</td>
-                                            <td>
-                                                <span className={`${styles.statusBadge} ${styles[app.status.toLowerCase()]}`}>
-                                                    {app.status}
-                                                </span>
-                                            </td>
-                                            <td>{app.reason || '-'}</td>
-                                            <td>{new Date(app.applied_date).toLocaleDateString()}</td>
-                                            <td>{app.approver_comments || '-'}</td>
-                                            <td>
-                                                {canCancelLeave(app) && (
-                                                    <button
-                                                        onClick={() => handleCancelClick(app.id)}
-                                                        className={styles.cancelBtn}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                )}
-                                            </td>
+                        <>
+                            <div className={styles.tableWrapper}>
+                                <table className={styles.leaveTable}>
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Status</th>
+                                            <th>Reason</th>
+                                            <th>Applied</th>
+                                            <th>Approver Comments</th>
+                                            <th>Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {paginatedApplications.map((app) => (
+                                            <tr key={app.id}>
+                                                <td>{app.leave_type}</td>
+                                                <td>{new Date(app.start_date).toISOString().split('T')[0]}</td>
+                                                <td>{new Date(app.end_date).toISOString().split('T')[0]}</td>
+                                                <td>
+                                                    <span className={`${styles.statusBadge} ${styles[app.status.toLowerCase()]}`}>
+                                                        {app.status}
+                                                    </span>
+                                                </td>
+                                                <td>{app.reason || '-'}</td>
+                                                <td>{new Date(app.applied_date).toLocaleDateString()}</td>
+                                                <td>{app.approver_comments || '-'}</td>
+                                                <td>
+                                                    {canCancelLeave(app) && (
+                                                        <button
+                                                            onClick={() => handleCancelClick(app.id)}
+                                                            className={styles.cancelBtn}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {totalPages > 1 && (
+                                <div className={styles.pagination}>
+                                    <button
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className={styles.pageBtn}
+                                    >
+                                        Previous
+                                    </button>
+                                    <div className={styles.pageNumbers}>
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                            <button
+                                                key={page}
+                                                onClick={() => handlePageChange(page)}
+                                                className={`${styles.pageBtn} ${currentPage === page ? styles.activePage : ''}`}
+                                            >
+                                                {page}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        className={styles.pageBtn}
+                                    >
+                                        Next
+                                    </button>
+                                    <span className={styles.pageInfo}>
+                                        Showing {startIndex + 1}-{Math.min(endIndex, applications.length)} of {applications.length}
+                                    </span>
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <div className={styles.empty}>
                             <p>No leave applications found</p>

@@ -32,6 +32,9 @@ export default function WFHApprovalsPage() {
     const [commentModalAction, setCommentModalAction] = useState<'approve' | 'reject'>('approve');
     const [approverComment, setApproverComment] = useState('');
     const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+    const [pendingCurrentPage, setPendingCurrentPage] = useState(1);
+    const [processedCurrentPage, setProcessedCurrentPage] = useState(1);
+    const [pageSize] = useState(3);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -185,6 +188,26 @@ export default function WFHApprovalsPage() {
     const pendingRequests = requests.filter(req => req.status.toLowerCase() === 'pending');
     const processedRequests = requests.filter(req => req.status.toLowerCase() !== 'pending');
 
+    // Pagination calculations for pending requests
+    const pendingTotalPages = Math.ceil(pendingRequests.length / pageSize);
+    const pendingStartIndex = (pendingCurrentPage - 1) * pageSize;
+    const pendingEndIndex = pendingStartIndex + pageSize;
+    const paginatedPendingRequests = pendingRequests.slice(pendingStartIndex, pendingEndIndex);
+
+    // Pagination calculations for processed requests
+    const processedTotalPages = Math.ceil(processedRequests.length / pageSize);
+    const processedStartIndex = (processedCurrentPage - 1) * pageSize;
+    const processedEndIndex = processedStartIndex + pageSize;
+    const paginatedProcessedRequests = processedRequests.slice(processedStartIndex, processedEndIndex);
+
+    const handlePendingPageChange = (page: number) => {
+        setPendingCurrentPage(page);
+    };
+
+    const handleProcessedPageChange = (page: number) => {
+        setProcessedCurrentPage(page);
+    };
+
     if (loading) {
         return (
             <DashboardLayout>
@@ -211,20 +234,21 @@ export default function WFHApprovalsPage() {
                             <p>No pending work from home requests.</p>
                         </div>
                     ) : (
-                        <div className={styles.tableWrapper}>
-                            <table className={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th>Employee</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Reason</th>
-                                        <th>Requested On</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {pendingRequests.map((request) => (
+                        <>
+                            <div className={styles.tableWrapper}>
+                                <table className={styles.table}>
+                                    <thead>
+                                        <tr>
+                                            <th>Employee</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Reason</th>
+                                            <th>Requested On</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {paginatedPendingRequests.map((request) => (
                                         <tr key={request.id}>
                                             <td>
                                                 {request.user 
@@ -254,31 +278,65 @@ export default function WFHApprovalsPage() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {pendingTotalPages > 1 && (
+                                <div className={styles.pagination}>
+                                    <button
+                                        onClick={() => handlePendingPageChange(pendingCurrentPage - 1)}
+                                        disabled={pendingCurrentPage === 1}
+                                        className={styles.pageBtn}
+                                    >
+                                        Previous
+                                    </button>
+                                    <div className={styles.pageNumbers}>
+                                        {Array.from({ length: pendingTotalPages }, (_, i) => i + 1).map((page) => (
+                                            <button
+                                                key={page}
+                                                onClick={() => handlePendingPageChange(page)}
+                                                className={`${styles.pageBtn} ${pendingCurrentPage === page ? styles.activePage : ''}`}
+                                            >
+                                                {page}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => handlePendingPageChange(pendingCurrentPage + 1)}
+                                        disabled={pendingCurrentPage === pendingTotalPages}
+                                        className={styles.pageBtn}
+                                    >
+                                        Next
+                                    </button>
+                                    <span className={styles.pageInfo}>
+                                        Showing {pendingStartIndex + 1}-{Math.min(pendingEndIndex, pendingRequests.length)} of {pendingRequests.length}
+                                    </span>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
 
                 {processedRequests.length > 0 && (
                     <div className={styles.section}>
                         <h2>Processed Requests</h2>
-                        <div className={styles.tableWrapper}>
-                            <table className={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th>Employee</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Reason</th>
-                                        <th>Status</th>
-                                        <th>Approver Comments</th>
-                                        <th>Requested On</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {processedRequests.map((request) => (
+                        <>
+                            <div className={styles.tableWrapper}>
+                                <table className={styles.table}>
+                                    <thead>
+                                        <tr>
+                                            <th>Employee</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Reason</th>
+                                            <th>Status</th>
+                                            <th>Approver Comments</th>
+                                            <th>Requested On</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {paginatedProcessedRequests.map((request) => (
                                         <tr key={request.id}>
                                             <td>
                                                 {request.user 
@@ -296,10 +354,43 @@ export default function WFHApprovalsPage() {
                                             <td>{request.approver_comments || '-'}</td>
                                             <td>{new Date(request.created_at).toLocaleDateString()}</td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {processedTotalPages > 1 && (
+                                <div className={styles.pagination}>
+                                    <button
+                                        onClick={() => handleProcessedPageChange(processedCurrentPage - 1)}
+                                        disabled={processedCurrentPage === 1}
+                                        className={styles.pageBtn}
+                                    >
+                                        Previous
+                                    </button>
+                                    <div className={styles.pageNumbers}>
+                                        {Array.from({ length: processedTotalPages }, (_, i) => i + 1).map((page) => (
+                                            <button
+                                                key={page}
+                                                onClick={() => handleProcessedPageChange(page)}
+                                                className={`${styles.pageBtn} ${processedCurrentPage === page ? styles.activePage : ''}`}
+                                            >
+                                                {page}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => handleProcessedPageChange(processedCurrentPage + 1)}
+                                        disabled={processedCurrentPage === processedTotalPages}
+                                        className={styles.pageBtn}
+                                    >
+                                        Next
+                                    </button>
+                                    <span className={styles.pageInfo}>
+                                        Showing {processedStartIndex + 1}-{Math.min(processedEndIndex, processedRequests.length)} of {processedRequests.length}
+                                    </span>
+                                </div>
+                            )}
+                        </>
                     </div>
                 )}
 

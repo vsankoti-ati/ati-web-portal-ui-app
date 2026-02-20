@@ -34,6 +34,8 @@ export default function WorkFromHomePage() {
     const [cancelRequestId, setCancelRequestId] = useState<string | null>(null);
     const [cancelReason, setCancelReason] = useState('');
     const [isCancelling, setIsCancelling] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize] = useState(5);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -68,6 +70,7 @@ export default function WorkFromHomePage() {
                     .then((res) => res.json())
                     .then((data) => {
                         setRequests(Array.isArray(data) ? data : []);
+                        setCurrentPage(1); // Reset to first page when data loads
                     })
                     .catch((error) => {
                         console.error('Error fetching WFH requests:', error);
@@ -110,6 +113,7 @@ export default function WorkFromHomePage() {
                 setRequests([newRequest, ...requests]);
                 setShowRequestForm(false);
                 setFormData({ start_date: '', end_date: '', reason: '' });
+                setCurrentPage(1); // Reset to first page to show new request
             } else {
                 console.error('Failed to submit WFH request');
             }
@@ -146,8 +150,18 @@ export default function WorkFromHomePage() {
             });
 
             if (res.ok) {
-                // Remove the cancelled request from the list
-                setRequests(requests.filter(req => req.id !== cancelRequestId));
+                console.log('WFH request cancelled successfully, updating status');
+                const responseData = await res.json();
+                
+                // Update the status of the cancelled request
+                const updatedRequests = requests.map(req => 
+                    req.id === cancelRequestId 
+                        ? { ...req, status: responseData.status || 'Cancelled', approver_comments: cancelReason }
+                        : req
+                );
+                console.log('Updated requests:', updatedRequests.length);
+                setRequests(updatedRequests);
+                
                 setShowCancelPopup(false);
                 setCancelRequestId(null);
                 setCancelReason('');
@@ -170,8 +184,8 @@ export default function WorkFromHomePage() {
         startDate.setHours(0, 0, 0, 0);
         const status = request.status.toLowerCase();
         
-        // Allow cancellation only for pending/submitted status and future dates
-        return (status === 'pending' || status === 'submitted') && startDate >= today;
+        // Allow cancellation only for pending/submitted status
+        return (status === 'pending' || status === 'submitted');
     };
 
     const getStatusStyle = (status: string) => {
@@ -195,6 +209,16 @@ export default function WorkFromHomePage() {
             </DashboardLayout>
         );
     }
+
+    // Pagination calculations
+    const totalPages = Math.ceil(requests.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedRequests = requests.slice(startIndex, endIndex);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
     return (
         <DashboardLayout>
@@ -307,47 +331,81 @@ export default function WorkFromHomePage() {
                             <p>Click "New Request" to submit your first request.</p>
                         </div>
                     ) : (
-                        <div className={styles.tableWrapper}>
-                            <table className={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Reason</th>
-                                        <th>Status</th>
-                                        <th>Approver Comments</th>
-                                        <th>Requested On</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {requests.map((request) => (
-                                        <tr key={request.id}>
-                                            <td>{new Date(request.start_date).toLocaleDateString()}</td>
-                                            <td>{new Date(request.end_date).toLocaleDateString()}</td>
-                                            <td>{request.reason}</td>
-                                            <td>
-                                                <span className={`${styles.status} ${getStatusStyle(request.status)}`}>
-                                                    {request.status}
-                                                </span>
-                                            </td>
-                                            <td>{request.approver_comments || '-'}</td>
-                                            <td>{new Date(request.created_at).toLocaleDateString()}</td>
-                                            <td>
-                                                {canCancelRequest(request) && (
-                                                    <button
-                                                        onClick={() => handleCancelClick(request.id)}
-                                                        className={styles.cancelBtnTable}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                )}
-                                            </td>
+                        <>
+                            <div className={styles.tableWrapper}>
+                                <table className={styles.table}>
+                                    <thead>
+                                        <tr>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Reason</th>
+                                            <th>Status</th>
+                                            <th>Approver Comments</th>
+                                            <th>Requested On</th>
+                                            <th>Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {paginatedRequests.map((request) => (
+                                            <tr key={request.id}>
+                                                <td>{new Date(request.start_date).toLocaleDateString()}</td>
+                                                <td>{new Date(request.end_date).toLocaleDateString()}</td>
+                                                <td>{request.reason}</td>
+                                                <td>
+                                                    <span className={`${styles.status} ${getStatusStyle(request.status)}`}>
+                                                        {request.status}
+                                                    </span>
+                                                </td>
+                                                <td>{request.approver_comments || '-'}</td>
+                                                <td>{new Date(request.created_at).toLocaleDateString()}</td>
+                                                <td>
+                                                    {canCancelRequest(request) && (
+                                                        <button
+                                                            onClick={() => handleCancelClick(request.id)}
+                                                            className={styles.cancelBtnTable}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {totalPages > 1 && (
+                                <div className={styles.pagination}>
+                                    <button
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className={styles.pageBtn}
+                                    >
+                                        Previous
+                                    </button>
+                                    <div className={styles.pageNumbers}>
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                            <button
+                                                key={page}
+                                                onClick={() => handlePageChange(page)}
+                                                className={`${styles.pageBtn} ${currentPage === page ? styles.activePage : ''}`}
+                                            >
+                                                {page}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        className={styles.pageBtn}
+                                    >
+                                        Next
+                                    </button>
+                                    <span className={styles.pageInfo}>
+                                        Showing {startIndex + 1}-{Math.min(endIndex, requests.length)} of {requests.length}
+                                    </span>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

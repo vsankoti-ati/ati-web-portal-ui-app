@@ -157,9 +157,24 @@ export default function TimesheetsPage() {
             });
 
             if (res.ok) {
-                // Remove the cancelled timesheet from the list
-                setMyTimesheets(myTimesheets.filter(ts => ts.id !== cancelTimesheetId));
-                setAllTimesheets(allTimesheets.filter(ts => ts.id !== cancelTimesheetId));
+                console.log('Timesheet cancelled successfully, updating status');
+                const responseData = await res.json();
+                
+                // Update the status of the cancelled timesheet in both lists
+                const updatedMyTimesheets = myTimesheets.map(ts => 
+                    ts.id === cancelTimesheetId 
+                        ? { ...ts, status: responseData.status || 'Cancelled', approver_comments: submitterComments }
+                        : ts
+                );
+                const updatedAllTimesheets = allTimesheets.map(ts => 
+                    ts.id === cancelTimesheetId 
+                        ? { ...ts, status: responseData.status || 'Cancelled', approver_comments: submitterComments }
+                        : ts
+                );
+                console.log('Updated timesheets');
+                setMyTimesheets(updatedMyTimesheets);
+                setAllTimesheets(updatedAllTimesheets);
+                
                 setShowCancelPopup(false);
                 setCancelTimesheetId(null);
                 setSubmitterComments('');
