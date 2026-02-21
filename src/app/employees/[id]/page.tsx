@@ -16,6 +16,13 @@ interface Employee {
     date_of_birth: string;
     date_of_joining: string;
     is_active: boolean;
+    geo_location?: string;
+    type?: string;
+    address_line_one?: string;
+    address_line_two?: string;
+    city?: string;
+    state?: string;
+    postal_code?: string;
 }
 
 export default function EmployeeDetailPage() {
@@ -26,6 +33,7 @@ export default function EmployeeDetailPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [formData, setFormData] = useState<Partial<Employee>>({});
+    const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -33,6 +41,26 @@ export default function EmployeeDetailPage() {
             router.push('/login');
             return;
         }
+
+        // Get current user's profile to check role
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => {
+                if (res.status === 401) {
+                    localStorage.removeItem('token');
+                    router.push('/login');
+                    throw new Error('Unauthorized');
+                }
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                return res.json();
+            })
+            .then((data) => {
+                setUserRole(data.role);
+            })
+            .catch((error) => {
+                console.error('Error fetching user profile:', error);
+            });
 
         console.log(`Fetching employee ${params.id} with token`);
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/employees/${params.id}`, {
@@ -209,7 +237,7 @@ export default function EmployeeDetailPage() {
                         <div className={styles.detailGrid}>
                             <div className={styles.detailItem}>
                                 <label>Role</label>
-                                {!isEditing ? (
+                                {!isEditing || (userRole !== 'Admin' && userRole !== 'HR') ? (
                                     <p>{employee.role}</p>
                                 ) : (
                                     <input
@@ -221,7 +249,7 @@ export default function EmployeeDetailPage() {
                             </div>
                             <div className={styles.detailItem}>
                                 <label>Date of Joining</label>
-                                {!isEditing ? (
+                                {!isEditing || (userRole !== 'Admin' && userRole !== 'HR') ? (
                                     <p>{employee.date_of_joining ? new Date(employee.date_of_joining).toLocaleDateString() : 'N/A'}</p>
                                 ) : (
                                     <input
@@ -233,13 +261,103 @@ export default function EmployeeDetailPage() {
                             </div>
                             <div className={styles.detailItem}>
                                 <label>Date of Birth</label>
-                                {!isEditing ? (
+                                {!isEditing || (userRole !== 'Admin' && userRole !== 'HR') ? (
                                     <p>{employee.date_of_birth ? new Date(employee.date_of_birth).toLocaleDateString() : 'N/A'}</p>
                                 ) : (
                                     <input
                                         type="date"
                                         value={formData.date_of_birth}
                                         onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                                    />
+                                )}
+                            </div>
+                            <div className={styles.detailItem}>
+                                <label>Location</label>
+                                {!isEditing || (userRole !== 'Admin' && userRole !== 'HR') ? (
+                                    <p>{employee.geo_location || 'N/A'}</p>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={formData.geo_location || ''}
+                                        onChange={(e) => setFormData({ ...formData, geo_location: e.target.value })}
+                                    />
+                                )}
+                            </div>
+                            <div className={styles.detailItem}>
+                                <label>Employee Type</label>
+                                {!isEditing || (userRole !== 'Admin' && userRole !== 'HR') ? (
+                                    <p>{employee.type || 'N/A'}</p>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={formData.type || ''}
+                                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                    />
+                                )}
+                            </div>
+                        </div>
+
+                        <h2>Address Information</h2>
+                        <div className={styles.detailGrid}>
+                            <div className={styles.detailItem}>
+                                <label>Address Line 1</label>
+                                {!isEditing ? (
+                                    <p>{employee.address_line_one || 'N/A'}</p>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={formData.address_line_one || ''}
+                                        onChange={(e) => setFormData({ ...formData, address_line_one: e.target.value })}
+                                        placeholder="Street address"
+                                    />
+                                )}
+                            </div>
+                            <div className={styles.detailItem}>
+                                <label>Address Line 2</label>
+                                {!isEditing ? (
+                                    <p>{employee.address_line_two || 'N/A'}</p>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={formData.address_line_two || ''}
+                                        onChange={(e) => setFormData({ ...formData, address_line_two: e.target.value })}
+                                        placeholder="Apartment, suite, etc."
+                                    />
+                                )}
+                            </div>
+                            <div className={styles.detailItem}>
+                                <label>City</label>
+                                {!isEditing ? (
+                                    <p>{employee.city || 'N/A'}</p>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={formData.city || ''}
+                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                    />
+                                )}
+                            </div>
+                            <div className={styles.detailItem}>
+                                <label>State</label>
+                                {!isEditing ? (
+                                    <p>{employee.state || 'N/A'}</p>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={formData.state || ''}
+                                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                                    />
+                                )}
+                            </div>
+                            <div className={styles.detailItem}>
+                                <label>Postal Code</label>
+                                {!isEditing ? (
+                                    <p>{employee.postal_code || 'N/A'}</p>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={formData.postal_code || ''}
+                                        onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
                                     />
                                 )}
                             </div>

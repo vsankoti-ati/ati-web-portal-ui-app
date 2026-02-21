@@ -116,6 +116,10 @@ export default function EmployeesPage() {
         setCurrentPage(1);
     }, [searchTerm]);
 
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
     const handleOpenStatusModal = (employee: Employee) => {
         setSelectedEmployee(employee);
         // Use employee_status if available, otherwise fallback to is_active
@@ -311,23 +315,34 @@ export default function EmployeesPage() {
                         </table>
                         {totalPages > 1 && (
                             <div className={styles.pagination}>
-                                <div className={styles.paginationButtons}>
-                                    <button
-                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                        disabled={currentPage === 1}
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                        disabled={currentPage === totalPages}
-                                    >
-                                        Next
-                                    </button>
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className={styles.pageBtn}
+                                >
+                                    Previous
+                                </button>
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        <button
+                                            key={page}
+                                            onClick={() => handlePageChange(page)}
+                                            className={`${styles.pageBtn} ${currentPage === page ? styles.activePage : ''}`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
                                 </div>
-                                <div className={styles.paginationInfo}>
-                                    Page {currentPage} of {totalPages}
-                                </div>
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className={styles.pageBtn}
+                                >
+                                    Next
+                                </button>
+                                <span className={styles.pageInfo}>
+                                    Showing {startIndex + 1}-{Math.min(endIndex, filteredEmployees.length)} of {filteredEmployees.length}
+                                </span>
                             </div>
                         )}
                     </div>

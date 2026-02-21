@@ -21,6 +21,11 @@ export default function NewEmployeePage() {
         is_active: true,
         geo_location: '',
         type: 'Full-time',
+        address_line_one: '',
+        address_line_two: '',
+        city: '',
+        state: '',
+        postal_code: '',
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -197,6 +202,54 @@ export default function NewEmployeePage() {
                                     />
                                     <span>Active Employee</span>
                                 </label>
+                            </div>
+                        </div>
+
+                        <div className={styles.section}>
+                            <h2>Address Information</h2>
+                            <div className={styles.formGroup}>
+                                <label>Address Line 1</label>
+                                <input
+                                    type="text"
+                                    value={formData.address_line_one}
+                                    onChange={(e) => setFormData({ ...formData, address_line_one: e.target.value })}
+                                    placeholder="Street address"
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Address Line 2</label>
+                                <input
+                                    type="text"
+                                    value={formData.address_line_two}
+                                    onChange={(e) => setFormData({ ...formData, address_line_two: e.target.value })}
+                                    placeholder="Apartment, suite, unit, building, floor, etc."
+                                />
+                            </div>
+                            <div className={styles.formRow}>
+                                <div className={styles.formGroup}>
+                                    <label>City</label>
+                                    <input
+                                        type="text"
+                                        value={formData.city}
+                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>State</label>
+                                    <input
+                                        type="text"
+                                        value={formData.state}
+                                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Postal Code</label>
+                                <input
+                                    type="text"
+                                    value={formData.postal_code}
+                                    onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
+                                />
                             </div>
                         </div>
 

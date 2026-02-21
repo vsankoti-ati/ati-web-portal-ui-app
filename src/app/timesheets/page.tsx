@@ -196,7 +196,7 @@ export default function TimesheetsPage() {
         return status === 'draft' || status === 'submitted';
     };
 
-    const renderTimesheetTable = (timesheets: Timesheet[], currentPage: number, totalPages: number, setPage: (page: number) => void) => {
+    const renderTimesheetTable = (timesheets: Timesheet[], currentPage: number, totalPages: number, setPage: (page: number) => void, totalItems: number, startIndex: number, endIndex: number) => {
         if (timesheets.length === 0) {
             return (
                 <div className={styles.empty}>
@@ -258,23 +258,34 @@ export default function TimesheetsPage() {
                 </table>
                 {totalPages > 1 && (
                     <div className={styles.pagination}>
-                        <div className={styles.paginationButtons}>
-                            <button
-                                onClick={() => setPage(Math.max(1, currentPage - 1))}
-                                disabled={currentPage === 1}
-                            >
-                                Previous
-                            </button>
-                            <button
-                                onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
-                                disabled={currentPage === totalPages}
-                            >
-                                Next
-                            </button>
+                        <button
+                            onClick={() => setPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={styles.pageBtn}
+                        >
+                            Previous
+                        </button>
+                        <div className={styles.pageNumbers}>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                <button
+                                    key={page}
+                                    onClick={() => setPage(page)}
+                                    className={`${styles.pageBtn} ${currentPage === page ? styles.activePage : ''}`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
                         </div>
-                        <div className={styles.paginationInfo}>
-                            Page {currentPage} of {totalPages}
-                        </div>
+                        <button
+                            onClick={() => setPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className={styles.pageBtn}
+                        >
+                            Next
+                        </button>
+                        <span className={styles.pageInfo}>
+                            Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems}
+                        </span>
                     </div>
                 )}
             </div>
@@ -334,7 +345,7 @@ export default function TimesheetsPage() {
                             + New Timesheet
                         </button>
                     </div>
-                    {renderTimesheetTable(paginatedMyTimesheets, myCurrentPage, myTotalPages, setMyCurrentPage)}
+                    {renderTimesheetTable(paginatedMyTimesheets, myCurrentPage, myTotalPages, setMyCurrentPage, filteredMyTimesheets.length, myStartIndex, myEndIndex)}
                 </div>
 
                 {/* Admin Section */}
@@ -363,7 +374,7 @@ export default function TimesheetsPage() {
                                 </button>
                             </div>
                         </div>
-                        {renderTimesheetTable(paginatedAdminTimesheets, adminCurrentPage, adminTotalPages, setAdminCurrentPage)}
+                        {renderTimesheetTable(paginatedAdminTimesheets, adminCurrentPage, adminTotalPages, setAdminCurrentPage, filteredAdminTimesheets.length, adminStartIndex, adminEndIndex)}
                     </div>
                 )}
             </div>
