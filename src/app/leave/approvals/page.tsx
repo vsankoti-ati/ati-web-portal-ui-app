@@ -191,6 +191,10 @@ export default function LeaveApprovalsPage() {
         setCurrentPage(1);
     }, [filter]);
 
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
     // Debug: Log all application statuses
     useEffect(() => {
         if (applications.length > 0) {
@@ -356,25 +360,33 @@ export default function LeaveApprovalsPage() {
                         {totalPages > 1 && (
                             <div className={styles.pagination}>
                                 <button
-                                    className={styles.pageBtn}
-                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 1}
+                                    className={styles.pageBtn}
                                 >
-                                    ← Previous
+                                    Previous
                                 </button>
-                                <div className={styles.pageInfo}>
-                                    Page {currentPage} of {totalPages}
-                                    <span className={styles.pageCount}>
-                                        ({filteredApplications.length} total)
-                                    </span>
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        <button
+                                            key={page}
+                                            onClick={() => handlePageChange(page)}
+                                            className={`${styles.pageBtn} ${currentPage === page ? styles.activePage : ''}`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
                                 </div>
                                 <button
-                                    className={styles.pageBtn}
-                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages}
+                                    className={styles.pageBtn}
                                 >
-                                    Next →
+                                    Next
                                 </button>
+                                <span className={styles.pageInfo}>
+                                    Showing {startIndex + 1}-{Math.min(endIndex, filteredApplications.length)} of {filteredApplications.length}
+                                </span>
                             </div>
                         )}
                     </div>
