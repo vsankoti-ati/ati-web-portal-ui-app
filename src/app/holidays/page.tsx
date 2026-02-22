@@ -91,6 +91,10 @@ export default function HolidaysPage() {
         setCurrentPage(1);
     }, [selectedYear, selectedClient]);
 
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
     const groupedHolidays = filteredHolidays.reduce((acc, holiday) => {
         const month = new Date(holiday.date).toLocaleString('default', { month: 'long' });
         if (!acc[month]) acc[month] = [];
@@ -181,22 +185,33 @@ export default function HolidaysPage() {
                         </table>
                         {totalPages > 1 && (
                             <div className={styles.pagination}>
-                                <div className={styles.paginationButtons}>
-                                    <button
-                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                        disabled={currentPage === 1}
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                        disabled={currentPage === totalPages}
-                                    >
-                                        Next
-                                    </button>
+                                <button
+                                    className={styles.pageBtn}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                >
+                                    Previous
+                                </button>
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                        <button
+                                            key={page}
+                                            className={`${styles.pageBtn} ${currentPage === page ? styles.activePage : ''}`}
+                                            onClick={() => handlePageChange(page)}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
                                 </div>
-                                <div className={styles.paginationInfo}>
-                                    Page {currentPage} of {totalPages}
+                                <button
+                                    className={styles.pageBtn}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    Next
+                                </button>
+                                <div className={styles.pageInfo}>
+                                    Showing {startIndex + 1}-{Math.min(endIndex, filteredHolidays.length)} of {filteredHolidays.length}
                                 </div>
                             </div>
                         )}
