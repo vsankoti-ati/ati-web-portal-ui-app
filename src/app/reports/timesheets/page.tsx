@@ -664,16 +664,16 @@ export default function TimesheetReportsPage() {
                                                                         <tbody>
                                                                             {report.timesheets.map((ts) => (
                                                                                 <tr key={ts.id}>
-                                                                                    <td>{new Date(ts.weekStartDate).toLocaleDateString()}</td>
-                                                                                    <td>{new Date(ts.weekEndDate).toLocaleDateString()}</td>
+                                                                                    <td>{new Date(ts.weekStartDate).toISOString().split('T')[0]}</td>
+                                                                                    <td>{new Date(ts.weekEndDate).toISOString().split('T')[0]}</td>
                                                                                     <td>
                                                                                         <span className={`${styles.badge} ${styles[ts.status.toLowerCase()]}`}>
                                                                                             {ts.status}
                                                                                         </span>
                                                                                     </td>
                                                                                     <td>{ts.totalHours.toFixed(1)}</td>
-                                                                                    <td>{ts.submissionDate ? new Date(ts.submissionDate).toLocaleDateString() : '-'}</td>
-                                                                                    <td>{ts.approvalDate ? new Date(ts.approvalDate).toLocaleDateString() : '-'}</td>
+                                                                                    <td>{ts.submissionDate ? new Date(ts.submissionDate).toISOString().split('T')[0] : '-'}</td>
+                                                                                    <td>{ts.approvalDate ? new Date(ts.approvalDate).toISOString().split('T')[0] : '-'}</td>
                                                                                 </tr>
                                                                             ))}
                                                                         </tbody>

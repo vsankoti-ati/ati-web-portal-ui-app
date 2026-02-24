@@ -635,15 +635,15 @@ export default function LeaveReportsPage() {
                                                                             {report.leaveApplications.map((app) => (
                                                                                 <tr key={app.id}>
                                                                                     <td>{app.leaveType}</td>
-                                                                                    <td>{new Date(app.startDate).toLocaleDateString()}</td>
-                                                                                    <td>{new Date(app.endDate).toLocaleDateString()}</td>
+                                                                                    <td>{new Date(app.startDate).toISOString().split('T')[0]}</td>
+                                                                                    <td>{new Date(app.endDate).toISOString().split('T')[0]}</td>
                                                                                     <td>{app.daysRequested}</td>
                                                                                     <td>
                                                                                         <span className={`${styles.badge} ${styles[app.status.toLowerCase()]}`}>
                                                                                             {app.status}
                                                                                         </span>
                                                                                     </td>
-                                                                                    <td>{new Date(app.appliedDate).toLocaleDateString()}</td>
+                                                                                    <td>{new Date(app.appliedDate).toISOString().split('T')[0]}</td>
                                                                                     <td>{app.reason}</td>
                                                                                 </tr>
                                                                             ))}

@@ -101,7 +101,7 @@ export default function JobsPage() {
                                             <span className={styles.typeBadge}>{job.employment_type}</span>
                                         </td>
                                         <td>{job.experience_required}</td>
-                                        <td>{new Date(job.posted_date).toLocaleDateString()}</td>
+                                        <td>{new Date(job.posted_date).toISOString().split('T')[0]}</td>
                                         <td>
                                             <button
                                                 className={styles.viewBtn}

@@ -123,9 +123,9 @@ export default function ProjectsPage() {
                                     <tr key={project.id}>
                                         <td className={styles.projectName}>{project.name}</td>
                                         <td className={styles.descriptionCell}>{project.description}</td>
-                                        <td>{new Date(project.start_date).toLocaleDateString()}</td>
+                                        <td>{new Date(project.start_date).toISOString().split('T')[0]}</td>
                                         <td>
-                                            {project.end_date ? new Date(project.end_date).toLocaleDateString() : 'Ongoing'}
+                                            {project.end_date ? new Date(project.end_date).toISOString().split('T')[0] : 'Ongoing'}
                                         </td>
                                         <td>
                                             <span className={`${styles.statusBadge} ${styles[project.status]}`}>

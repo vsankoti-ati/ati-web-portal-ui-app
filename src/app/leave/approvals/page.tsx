@@ -314,12 +314,12 @@ export default function LeaveApprovalsPage() {
                                             {app.user?.first_name} {app.user?.last_name}
                                         </td>
                                         <td>{app.leave_type}</td>
-                                        <td>{new Date(app.start_date).toLocaleDateString()}</td>
-                                        <td>{new Date(app.end_date).toLocaleDateString()}</td>
+                                        <td>{new Date(app.start_date).toISOString().split('T')[0]}</td>
+                                        <td>{new Date(app.end_date).toISOString().split('T')[0]}</td>
                                         <td className={styles.reasonCell}>
                                             {app.reason || '-'}
                                         </td>
-                                        <td>{new Date(app.applied_date).toLocaleDateString()}</td>
+                                        <td>{new Date(app.applied_date).toISOString().split('T')[0]}</td>
                                         <td>
                                             <span className={`${styles.statusBadge} ${styles[app.status]}`}>
                                                 {app.status}

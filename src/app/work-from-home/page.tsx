@@ -348,8 +348,8 @@ export default function WorkFromHomePage() {
                                     <tbody>
                                         {paginatedRequests.map((request) => (
                                             <tr key={request.id}>
-                                                <td>{new Date(request.start_date).toLocaleDateString()}</td>
-                                                <td>{new Date(request.end_date).toLocaleDateString()}</td>
+                                                <td>{new Date(request.start_date).toISOString().split('T')[0]}</td>
+                                                <td>{new Date(request.end_date).toISOString().split('T')[0]}</td>
                                                 <td>{request.reason}</td>
                                                 <td>
                                                     <span className={`${styles.status} ${getStatusStyle(request.status)}`}>
@@ -357,7 +357,7 @@ export default function WorkFromHomePage() {
                                                     </span>
                                                 </td>
                                                 <td>{request.approver_comments || '-'}</td>
-                                                <td>{new Date(request.created_at).toLocaleDateString()}</td>
+                                                <td>{new Date(request.created_at).toISOString().split('T')[0]}</td>
                                                 <td>
                                                     {canCancelRequest(request) && (
                                                         <button

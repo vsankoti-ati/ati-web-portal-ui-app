@@ -255,10 +255,10 @@ export default function WFHApprovalsPage() {
                                                     ? `${request.user.first_name} ${request.user.last_name}` 
                                                     : request.user_id}
                                             </td>
-                                            <td>{new Date(request.start_date).toLocaleDateString()}</td>
-                                            <td>{new Date(request.end_date).toLocaleDateString()}</td>
+                                            <td>{new Date(request.start_date).toISOString().split('T')[0]}</td>
+                                            <td>{new Date(request.end_date).toISOString().split('T')[0]}</td>
                                             <td className={styles.reasonCell}>{request.reason}</td>
-                                            <td>{new Date(request.created_at).toLocaleDateString()}</td>
+                                            <td>{new Date(request.created_at).toISOString().split('T')[0]}</td>
                                             <td>
                                                 <div className={styles.actionButtons}>
                                                     <button
@@ -343,8 +343,8 @@ export default function WFHApprovalsPage() {
                                                     ? `${request.user.first_name} ${request.user.last_name}` 
                                                     : request.user_id}
                                             </td>
-                                            <td>{new Date(request.start_date).toLocaleDateString()}</td>
-                                            <td>{new Date(request.end_date).toLocaleDateString()}</td>
+                                            <td>{new Date(request.start_date).toISOString().split('T')[0]}</td>
+                                            <td>{new Date(request.end_date).toISOString().split('T')[0]}</td>
                                             <td className={styles.reasonCell}>{request.reason}</td>
                                             <td>
                                                 <span className={`${styles.status} ${getStatusStyle(request.status)}`}>
@@ -352,7 +352,7 @@ export default function WFHApprovalsPage() {
                                                 </span>
                                             </td>
                                             <td>{request.approver_comments || '-'}</td>
-                                            <td>{new Date(request.created_at).toLocaleDateString()}</td>
+                                            <td>{new Date(request.created_at).toISOString().split('T')[0]}</td>
                                         </tr>
                                         ))}
                                     </tbody>

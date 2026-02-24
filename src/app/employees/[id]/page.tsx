@@ -250,7 +250,7 @@ export default function EmployeeDetailPage() {
                             <div className={styles.detailItem}>
                                 <label>Date of Joining</label>
                                 {!isEditing || (userRole !== 'Admin' && userRole !== 'HR') ? (
-                                    <p>{employee.date_of_joining ? new Date(employee.date_of_joining).toLocaleDateString() : 'N/A'}</p>
+                                    <p>{employee.date_of_joining ? new Date(employee.date_of_joining).toISOString().split('T')[0] : 'N/A'}</p>
                                 ) : (
                                     <input
                                         type="date"
@@ -262,7 +262,7 @@ export default function EmployeeDetailPage() {
                             <div className={styles.detailItem}>
                                 <label>Date of Birth</label>
                                 {!isEditing || (userRole !== 'Admin' && userRole !== 'HR') ? (
-                                    <p>{employee.date_of_birth ? new Date(employee.date_of_birth).toLocaleDateString() : 'N/A'}</p>
+                                    <p>{employee.date_of_birth ? new Date(employee.date_of_birth).toISOString().split('T')[0] : 'N/A'}</p>
                                 ) : (
                                     <input
                                         type="date"

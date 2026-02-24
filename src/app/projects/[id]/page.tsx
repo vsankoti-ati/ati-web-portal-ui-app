@@ -185,7 +185,7 @@ export default function ProjectDetailPage() {
                             <div className={styles.detailItem}>
                                 <label>Start Date</label>
                                 {!isEditing ? (
-                                    <p>{new Date(project.start_date).toLocaleDateString()}</p>
+                                    <p>{new Date(project.start_date).toISOString().split('T')[0]}</p>
                                 ) : (
                                     <input
                                         type="date"
@@ -198,7 +198,7 @@ export default function ProjectDetailPage() {
                             <div className={styles.detailItem}>
                                 <label>End Date</label>
                                 {!isEditing ? (
-                                    <p>{project.end_date ? new Date(project.end_date).toLocaleDateString() : 'Ongoing'}</p>
+                                    <p>{project.end_date ? new Date(project.end_date).toISOString().split('T')[0] : 'Ongoing'}</p>
                                 ) : (
                                     <input
                                         type="date"
@@ -210,7 +210,7 @@ export default function ProjectDetailPage() {
 
                             <div className={styles.detailItem}>
                                 <label>Created On</label>
-                                <p>{new Date(project.created_at).toLocaleDateString()}</p>
+                                <p>{new Date(project.created_at).toISOString().split('T')[0]}</p>
                             </div>
                         </div>
                     </div>

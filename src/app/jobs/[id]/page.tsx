@@ -198,7 +198,7 @@ export default function JobDetailPage() {
 
                         <div className={styles.footer}>
                             <p className={styles.postedDate}>
-                                Posted on {new Date(job.posted_date).toLocaleDateString()}
+                                Posted on {new Date(job.posted_date).toISOString().split('T')[0]}
                             </p>
                         </div>
                     </div>

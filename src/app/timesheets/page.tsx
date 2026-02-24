@@ -222,7 +222,7 @@ export default function TimesheetsPage() {
                         {timesheets.map((ts) => (
                             <tr key={ts.id}>
                                 <td className={styles.periodCell}>
-                                    {new Date(ts.week_start_date).toLocaleDateString()} - {new Date(ts.week_end_date).toLocaleDateString()}
+                                    {new Date(ts.week_start_date).toISOString().split('T')[0]} - {new Date(ts.week_end_date).toISOString().split('T')[0]}
                                 </td>
                                 <td>{ts.submitter || 'N/A'}</td>
                                 <td>
@@ -231,7 +231,7 @@ export default function TimesheetsPage() {
                                     </span>
                                 </td>
                                 <td>
-                                    {ts.submission_date ? new Date(ts.submission_date).toLocaleDateString() : 'Not submitted'}
+                                    {ts.submission_date ? new Date(ts.submission_date).toISOString().split('T')[0] : 'Not submitted'}
                                 </td>
                                 <td>{ts.approver_comments || '-'}</td>
                                 <td>

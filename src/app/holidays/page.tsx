@@ -167,15 +167,15 @@ export default function HolidaysPage() {
                                         <td>
                                             <div className={styles.dateCell}>
                                                 <span className={styles.dateNumber}>
-                                                    {new Date(holiday.date).getDate()}
+                                                    {new Date(holiday.date).getUTCDate()}
                                                 </span>
                                                 <span className={styles.monthName}>
-                                                    {new Date(holiday.date).toLocaleString('default', { month: 'short' })}
+                                                    {new Date(holiday.date).toLocaleString('default', { month: 'short', timeZone: 'UTC' })}
                                                 </span>
                                             </div>
                                         </td>
                                         <td className={styles.weekdayCell}>
-                                            {new Date(holiday.date).toLocaleDateString('en-US', { weekday: 'long' })}
+                                            {new Date(holiday.date).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })}
                                         </td>
                                         <td className={styles.occasionCell}>{holiday.occasion}</td>
                                         <td>{holiday.client}</td>

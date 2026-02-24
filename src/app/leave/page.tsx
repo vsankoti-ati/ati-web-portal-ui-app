@@ -428,7 +428,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                                     </span>
                                                 </td>
                                                 <td>{app.reason || '-'}</td>
-                                                <td>{new Date(app.applied_date).toLocaleDateString()}</td>
+                                                <td>{new Date(app.applied_date).toISOString().split('T')[0]}</td>
                                                 <td>{app.approver_comments || '-'}</td>
                                                 <td>
                                                     {canCancelLeave(app) && (

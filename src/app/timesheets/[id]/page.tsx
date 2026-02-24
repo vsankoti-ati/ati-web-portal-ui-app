@@ -346,7 +346,7 @@ export default function TimesheetDetailPage() {
                         <div>
                             <h1>Timesheet Details</h1>
                             <p className={styles.period}>
-                                {new Date(timesheet.week_start_date).toLocaleDateString()} - {new Date(timesheet.week_end_date).toLocaleDateString()}
+                                {new Date(timesheet.week_start_date).toISOString().split('T')[0]} - {new Date(timesheet.week_end_date).toISOString().split('T')[0]}
                             </p>
                         </div>
                         <span className={`${styles.status} ${styles[timesheet.status]}`}>
