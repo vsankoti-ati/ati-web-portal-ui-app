@@ -220,7 +220,7 @@ export default function TimesheetDetailPage() {
         const startDate = new Date(timesheet.week_start_date);
         
         // Get the day of week (0 = Sunday, 6 = Saturday)
-        const dayOfWeek = startDate.getDay();
+        const dayOfWeek = startDate.getUTCDay();
         
         // Calculate the Sunday of this week
         const sunday = new Date(startDate);
@@ -249,9 +249,9 @@ export default function TimesheetDetailPage() {
             return '';
         }
         
-        // getMonth() returns 0-indexed values, so add 1
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
+        // Extract month and day from ISO string
+        const month = date.toISOString().substring(5, 7);
+        const day = date.toISOString().substring(8, 10);
         const result = `${month}/${day}`;
         
         console.log(`formatDateToMMDD: ${date} -> ${result}`);
@@ -264,13 +264,13 @@ export default function TimesheetDetailPage() {
             return [];
         }
         
-        console.log(`Looking for entries for UI date: ${date} (Month: ${date.getMonth()}, Day: ${date.getDate()})`);
+        console.log(`Looking for entries for UI date: ${date} (Month: ${date.getUTCMonth()}, Day: ${date.getDate()})`);
         
         // Debug: log all entry dates
         console.log('All entries with dates:', timesheet.entries.map(entry => ({
             id: entry.id,
             entry_date: entry.entry_date,
-            month: entry.entry_date ? entry.entry_date.getMonth() : 'null',
+            month: entry.entry_date ? entry.entry_date.getUTCMonth() : 'null',
             day: entry.entry_date ? entry.entry_date.getDate() : 'null',
             hours: entry.hours
         })));
@@ -281,11 +281,11 @@ export default function TimesheetDetailPage() {
                 return false;
             }
             
-            // Compare dates using getMonth() and getDate()
-            const matches = entry.entry_date.getMonth() === date.getMonth() && 
-                           entry.entry_date.getDate() === date.getDate();
+            // Compare dates using getUTCMonth() and getDate()
+            const matches = entry.entry_date.getUTCMonth() === date.getUTCMonth() && 
+                           entry.entry_date.getUTCDate() === date.getUTCDate();
             
-            console.log(`Entry ${entry.id}: Month ${entry.entry_date.getMonth()} vs ${date.getMonth()}, Day ${entry.entry_date.getDate()} vs ${date.getDate()} - Matches: ${matches}`);
+            console.log(`Entry ${entry.id}: Month ${entry.entry_date.getUTCMonth()} vs ${date.getUTCMonth()}, Day ${entry.entry_date.getDate()} vs ${date.getDate()} - Matches: ${matches}`);
             
             return matches;
         });
