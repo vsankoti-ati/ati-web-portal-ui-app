@@ -46,11 +46,15 @@ export default function NewTimesheetPage() {
             return;
         }
 
-        // Set default week start to current Sunday
+        // Set default week start to current Sunday in local time
         const today = new Date();
         const sunday = new Date(today);
         sunday.setDate(today.getDate() - today.getDay());
-        setWeekStart(sunday.toISOString().split('T')[0]);
+        // Format as YYYY-MM-DD using local time
+        const year = sunday.getFullYear();
+        const month = String(sunday.getMonth() + 1).padStart(2, '0');
+        const day = String(sunday.getDate()).padStart(2, '0');
+        setWeekStart(`${year}-${month}-${day}`);
 
         // Fetch projects
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets/projects/all`, {
@@ -88,7 +92,8 @@ export default function NewTimesheetPage() {
     const calculateWeekDates = () => {
         if (!weekStart) return [];
         
-        const startDate = new Date(weekStart);
+        // Parse date as local time by adding time component
+        const startDate = new Date(weekStart + 'T00:00:00');
         const weekDates = [];
         
         for (let i = 0; i < 7; i++) {
@@ -123,10 +128,15 @@ export default function NewTimesheetPage() {
         const weekDates = calculateWeekDates();
 
         try {
-            // Calculate week end date
-            const startDate = new Date(weekStart);
+            // Calculate week end date using local time
+            const startDate = new Date(weekStart + 'T00:00:00');
             const endDate = new Date(startDate);
             endDate.setDate(startDate.getDate() + 6);
+            
+            // Format end date as YYYY-MM-DD using local time
+            const endDateStr = endDate.getFullYear() + '-' + 
+                String(endDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(endDate.getDate()).padStart(2, '0');
 
             // Create timesheet
             const timesheetRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/timesheets`, {
@@ -137,7 +147,7 @@ export default function NewTimesheetPage() {
                 },
                 body: JSON.stringify({
                     week_start_date: weekStart,
-                    week_end_date: endDate.toISOString().split('T')[0],
+                    week_end_date: endDateStr,
                 }),
             });
 
@@ -158,6 +168,7 @@ export default function NewTimesheetPage() {
                         for (const { key, offset } of days) {
                             const hours = entry[key as keyof Omit<TimeEntry, 'project_id'>];
                             if (hours > 0) {
+                                // Use local time for consistency
                                 const base = new Date(weekStart + 'T00:00:00');
                                 base.setDate(base.getDate() + offset);
                                 const localDateStr = base.getFullYear() + '-' + String(base.getMonth() + 1).padStart(2, '0') + '-' + String(base.getDate()).padStart(2, '0');
@@ -209,7 +220,7 @@ export default function NewTimesheetPage() {
 
                 <form onSubmit={handleSubmit}>
                     <div className={styles.weekSelector}>
-                        <label>Week Starting (Monday):</label>
+                        <label>Week Starting (Sunday):</label>
                         <input
                             type="date"
                             value={weekStart}

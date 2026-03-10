@@ -224,13 +224,13 @@ export default function TimesheetDetailPage() {
         
         // Calculate the Sunday of this week
         const sunday = new Date(startDate);
-        sunday.setDate(startDate.getDate() - dayOfWeek);
+        sunday.setUTCDate(startDate.getUTCDate() - dayOfWeek);
         
         const days = [];
         
         for (let i = 0; i < 7; i++) {
             const currentDate = new Date(sunday);
-            currentDate.setDate(sunday.getDate() + i);
+            currentDate.setUTCDate(sunday.getUTCDate() + i);
             days.push(currentDate);
         }
         
