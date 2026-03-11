@@ -323,12 +323,12 @@ export default function TimesheetDetailPage() {
                         ← Back to Timesheets
                     </button>
                     <div className={styles.actions}>
-                        {timesheet.status === 'draft' && (
+                        {timesheet.status.toLowerCase() === 'draft' && (
                             <button className={styles.submitBtn} onClick={handleSubmit} disabled={isProcessing}>
                                 {isProcessing ? 'Submitting...' : 'Submit for Approval'}
                             </button>
                         )}
-                        {timesheet.status === 'submitted' && userRole === 'Admin' && (
+                        {timesheet.status.toLowerCase() === 'submitted' && userRole === 'Admin' && (
                             <>
                                 <button className={styles.rejectBtn} onClick={() => openCommentModal('reject')} disabled={isProcessing}>
                                     {isProcessing ? 'Rejecting...' : 'Reject Timesheet'}

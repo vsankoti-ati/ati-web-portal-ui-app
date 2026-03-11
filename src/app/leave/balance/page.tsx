@@ -97,7 +97,7 @@ export default function LeaveBalancePage() {
                     employee_id: formData.id,
                     year: parseInt(formData.year),
                     leave_type: formData.leave_type,
-                    remaining_days: parseInt(formData.remaining_days),
+                    remaining_days: parseFloat(formData.remaining_days),
                 }),
             });
 
@@ -211,8 +211,9 @@ export default function LeaveBalancePage() {
                                 required
                                 min="0"
                                 max="365"
+                                step="0.5"
                                 className={styles.input}
-                                placeholder="Enter number of remaining days"
+                                placeholder="Enter number of remaining days (e.g., 1.5, 2.5)"
                             />
                         </div>
 
