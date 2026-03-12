@@ -21,6 +21,8 @@ interface LeaveApplication {
     reason: string;
     applied_date: string;
     approver_comments: string;
+    leavesRequested: number,
+    days_requested: number,
 }
 
 interface LeavePageProps {
@@ -41,6 +43,8 @@ export default function LeavePage({ userId }: LeavePageProps) {
         start_date: '',
         end_date: '',
         reason: '',
+        start_day_length: 1,
+        end_day_length: 1,
     });
     const [showCancelPopup, setShowCancelPopup] = useState(false);
     const [cancelLeaveId, setCancelLeaveId] = useState<string | null>(null);
@@ -160,7 +164,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                 const newApp = await res.json();
                 setApplications([newApp, ...applications]);
                 setShowApplyForm(false);
-                setFormData({ leave_type: 'Earned', start_date: '', end_date: '', reason: '' });
+                setFormData({ leave_type: 'Earned', start_date: '', end_date: '', reason: '', start_day_length: 1, end_day_length: 1 });
                 setCurrentPage(1); // Reset to first page to show new application
             }
         } catch (error) {
@@ -343,6 +347,19 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                     />
                                 </div>
                                 <div className={styles.formGroup}>
+                                    <label>From Day Type</label>
+                                    <select
+                                        value={formData.start_day_length}
+                                        onChange={(e) => setFormData({ ...formData, start_day_length: Number(e.target.value) })}
+                                        aria-label="From Day Type"
+                                    >
+                                        <option value={1}>Full Day</option>
+                                        <option value={0.5}>Half Day</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className={styles.formRow}>
+                                <div className={styles.formGroup}>
                                     <label>To Date</label>
                                     <input
                                         type="date"
@@ -351,6 +368,17 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                         required
                                         aria-label="To Date"
                                     />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>To Day Type</label>
+                                    <select
+                                        value={formData.end_day_length}
+                                        onChange={(e) => setFormData({ ...formData, end_day_length: Number(e.target.value) })}
+                                        aria-label="To Day Type"
+                                    >
+                                        <option value={1}>Full Day</option>
+                                        <option value={0.5}>Half Day</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className={styles.formGroup}>
@@ -409,6 +437,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                             <th>Type</th>
                                             <th>From</th>
                                             <th>To</th>
+                                            <th>Days Requested</th>
                                             <th>Status</th>
                                             <th>Reason</th>
                                             <th>Applied</th>
@@ -422,6 +451,7 @@ export default function LeavePage({ userId }: LeavePageProps) {
                                                 <td>{app.leave_type}</td>
                                                 <td>{new Date(app.start_date).toISOString().split('T')[0]}</td>
                                                 <td>{new Date(app.end_date).toISOString().split('T')[0]}</td>
+                                                <td>{app.days_requested ?? '-'}</td>
                                                 <td>
                                                     <span className={`${styles.statusBadge} ${styles[app.status.toLowerCase()]}`}>
                                                         {app.status}

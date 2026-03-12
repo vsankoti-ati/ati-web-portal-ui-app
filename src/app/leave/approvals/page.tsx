@@ -15,6 +15,7 @@ interface LeaveApplication {
     status: string;
     reason: string;
     applied_date: string;
+    days_requested: number;
     user: any;
 }
 
@@ -301,6 +302,7 @@ export default function LeaveApprovalsPage() {
                                     <th>Leave Type</th>
                                     <th>From Date</th>
                                     <th>To Date</th>
+                                    <th>Days Requested</th>
                                     <th>Reason</th>
                                     <th>Applied On</th>
                                     <th>Status</th>
@@ -316,6 +318,7 @@ export default function LeaveApprovalsPage() {
                                         <td>{app.leave_type}</td>
                                         <td>{new Date(app.start_date).toISOString().split('T')[0]}</td>
                                         <td>{new Date(app.end_date).toISOString().split('T')[0]}</td>
+                                        <td>{app.days_requested ?? '-'}</td>
                                         <td className={styles.reasonCell}>
                                             {app.reason || '-'}
                                         </td>
