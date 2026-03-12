@@ -26,3 +26,4 @@ coverage/
 .npm/
 .yarn/
 .fake
+*requirement.txt

@@ -1,0 +1,391 @@
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header h1 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 2rem;
+}
+
+.backBtn {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.backBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.filterSection {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.searchBar {
+    flex: 1;
+    min-width: 300px;
+}
+
+.searchBar input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.searchBar input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.yearFilter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.yearFilter label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.yearSelect {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    background: white;
+    transition: border-color 0.3s;
+}
+
+.yearSelect:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.statsSection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.statCard {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    color: white;
+}
+
+.statLabel {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.statValue {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.tableWrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;
+}
+
+.balanceTable {
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+}
+
+.balanceTable thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.balanceTable thead tr:first-child th {
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.balanceTable thead tr:first-child th:first-child,
+.balanceTable thead tr:first-child th:nth-child(2) {
+    text-align: left;
+}
+
+.balanceTable thead tr:first-child th:last-child {
+    border-right: none;
+}
+
+.balanceTable thead tr:nth-child(2) th {
+    padding: 0.7rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.balanceTable thead tr:nth-child(2) th:first-child,
+.balanceTable thead tr:nth-child(2) th:nth-child(2) {
+    background: transparent;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.balanceTable thead tr:nth-child(2) th:last-child {
+    background: transparent;
+    border-right: none;
+}
+
+.balanceTable tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
+
+.balanceTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.balanceTable tbody tr:last-child {
+    border-bottom: none;
+}
+
+.balanceTable td {
+    padding: 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.balanceTable td:first-child,
+.balanceTable td:nth-child(2) {
+    text-align: left;
+    font-weight: 500;
+}
+
+.balanceTable td:last-child {
+    text-align: center;
+}
+
+.leaveTypeBadge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.balanceBadge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.paginationBtn {
+    padding: 0.6rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.paginationBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.paginationBtn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pageInfo {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.noData {
+    background: white;
+    padding: 3rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.noData p {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+}
+
+.accessDenied {
+    background: white;
+    padding: 3rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.accessDenied h2 {
+    color: #d32f2f;
+    margin-bottom: 1rem;
+}
+
+.accessDenied p {
+    color: #666;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .filterSection {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchBar {
+        min-width: 100%;
+    }
+
+    .yearFilter {
+        justify-content: center;
+    }
+
+    .statsSection {
+        grid-template-columns: 1fr;
+    }
+
+    .tableWrapper {
+        margin: 0 -1rem;
+        border-radius: 0;
+    }
+
+    .balanceTable {
+        font-size: 0.8rem;
+        min-width: 1000px;
+    }
+
+    .balanceTable th,
+    .balanceTable td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .balanceTable thead tr:first-child th {
+        font-size: 0.8rem;
+    }
+
+    .balanceTable thead tr:nth-child(2) th {
+        font-size: 0.7rem;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .paginationBtn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .backBtn {
+        width: 100%;
+    }
+
+    .balanceTable th,
+    .balanceTable td {
+        font-size: 0.7rem;
+        padding: 0.5rem 0.3rem;
+    }
+
+    .balanceTable thead tr:first-child th {
+        font-size: 0.7rem;
+        padding: 0.6rem 0.3rem;
+    }
+
+    .balanceTable thead tr:nth-child(2) th {
+        font-size: 0.65rem;
+        padding: 0.4rem 0.3rem;
+    }
+
+    .leaveTypeBadge,
+    .balanceBadge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+}

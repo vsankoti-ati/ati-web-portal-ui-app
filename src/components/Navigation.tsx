@@ -24,6 +24,7 @@ export default function Navigation({ user }: NavigationProps) {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(true); // Default to open
     const [reportsOpen, setReportsOpen] = useState(false);
+    const [leaveOpen, setLeaveOpen] = useState(false);
     const initialized = useRef(false);
 
     useEffect(() => {
@@ -61,7 +62,6 @@ export default function Navigation({ user }: NavigationProps) {
     const navItems = [
         { path: '/', label: 'Home', icon: '🏠' },
         { path: '/employees', label: 'Employees', icon: '🧑‍💼', roles: ['Admin', 'HR'] },
-        { path: '/leave', label: 'Leave', icon: '🏖️' },
         { path: '/work-from-home', label: 'Work From Home', icon: '🏡' },
         { path: '/timesheets', label: 'Timesheets', icon: '⏰' },
         { path: '/projects', label: 'Projects', icon: '📊' },
@@ -128,6 +128,54 @@ export default function Navigation({ user }: NavigationProps) {
                                 </a>
                             </li>
                         ))}
+                        
+                        {/* Leave menu with submenu */}
+                        <li className={styles.hasSubmenu}>
+                            <a
+                                href="#"
+                                className={pathname.startsWith('/leave') ? styles.active : ''}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setLeaveOpen(!leaveOpen);
+                                }}
+                            >
+                                <span className={styles.icon}>🏖️</span>
+                                <span>Leave</span>
+                                <span className={styles.arrow}>{leaveOpen ? '▼' : '▶'}</span>
+                            </a>
+                            {leaveOpen && (
+                                <ul className={styles.submenu}>
+                                    <li>
+                                        <a
+                                            href="/leave"
+                                            className={pathname === '/leave' ? styles.active : ''}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                router.push('/leave');
+                                            }}
+                                        >
+                                            <span className={styles.icon}>📝</span>
+                                            <span>My Leave</span>
+                                        </a>
+                                    </li>
+                                    {(user?.role === 'Admin' || user?.role === 'HR') && (
+                                        <li>
+                                            <a
+                                                href="/leave/all-balances"
+                                                className={pathname === '/leave/all-balances' ? styles.active : ''}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    router.push('/leave/all-balances');
+                                                }}
+                                            >
+                                                <span className={styles.icon}>📊</span>
+                                                <span>All Employee Balances</span>
+                                            </a>
+                                        </li>
+                                    )}
+                                </ul>
+                            )}
+                        </li>
                         
                         {/* Reports menu - Admin only */}
                         {user?.role === 'Admin' && (
