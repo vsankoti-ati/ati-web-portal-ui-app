@@ -50,7 +50,7 @@ export default function AllBalancesPage() {
     const [accessDenied, setAccessDenied] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const pageSize = 10;
+    const pageSize = 5;
 
     // Generate year options (current year and previous 2 years)
     const yearOptions = Array.from({ length: 3 }, (_, i) => new Date().getFullYear() - i);
